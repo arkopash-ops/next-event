@@ -1,2 +1,23 @@
 @import "tailwindcss";
 
+html.light {
+  --bg-color: #ffffff; /* white */
+  --brown: #a0522d;
+  --orange: #ffa500;
+  --yellow: #ffff00;
+}
+
+html.dark {
+  --bg-color: #000000; /* black */
+  --brown: #8b4513;
+  --orange: #ff8c00;
+  --yellow: #ffd700;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--brown);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
