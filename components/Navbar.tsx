@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaMoon, FaSun } from "react-icons/fa";
 
 interface NavbarProps {
@@ -13,6 +13,7 @@ interface NavbarProps {
 export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathName = usePathname();
 
   const handleLogout = async () => {
     try {
@@ -32,62 +33,104 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
     }
   };
 
-  return (
-    <nav className="p-4 flex justify-between items-center bg-(--brown) text-(--yellow) sticky top-0 z-50">
-      <div className="font-bold text-xl">NextEvent</div>
+  const linkStyle = (path: string) => ({
+    padding: "0.25rem 0.75rem",
+    borderRadius: "0.375rem",
+    transition: "all 0.2s",
+    backgroundColor: pathName === path ? "var(--orange)" : "transparent",
+    color: pathName === path ? "var(--text-color)" : "var(--yellow)",
+    boxShadow: pathName === path ? "0 4px 6px var(--shadow-color)" : "none",
+    cursor: "pointer",
+  });
 
-      <div className="flex items-center gap-4">
+  return (
+    <nav
+      style={{
+        backgroundColor: "var(--brown)",
+        color: "var(--yellow)",
+        backdropFilter: "blur(6px)",
+        boxShadow: "0 2px 8px var(--shadow-color)",
+      }}
+      className="px-6 py-3 flex justify-between items-center sticky top-0 z-50"
+    >
+      {/* Logo */}
+      <div className="font-extrabold text-2xl tracking-wide">
+        Next<span style={{ color: "var(--orange)" }}>Event</span>
+      </div>
+
+      <div className="flex items-center gap-5">
         {/* Auth links */}
         {!user && (
           <>
-            <Link href="/login">Login</Link>
-            <Link href="/register">Register</Link>
+            <Link href="/" style={linkStyle("/")}>
+              Home
+            </Link>
+            <Link href="/login" style={linkStyle("/login")}>
+              Login
+            </Link>
+            <Link href="/register" style={linkStyle("/register")}>
+              Register
+            </Link>
           </>
         )}
 
         {/* Role-based links */}
-        {user && user.role === "ADMIN" && (
-          <>
-            <Link href="/adminDashboard">Dashboard</Link>
-          </>
+        {user && (
+          <Link
+            href={
+              user.role === "ADMIN"
+                ? "/adminDashboard"
+                : user.role === "ORGANIZER"
+                  ? "/organizerDashboard"
+                  : "/userDashboard"
+            }
+            style={linkStyle(
+              user.role === "ADMIN"
+                ? "/adminDashboard"
+                : user.role === "ORGANIZER"
+                  ? "/organizerDashboard"
+                  : "/userDashboard",
+            )}
+          >
+            Dashboard
+          </Link>
         )}
 
-        {user && user.role === "ORGANIZER" && (
-          <>
-            <Link href="/organizerDashboard">Dashboard</Link>
-          </>
-        )}
-
-        {user && user.role === "USER" && (
-          <>
-            <Link href="/userDashboard">Dashboard</Link>
-          </>
-        )}
-
-        {/* logout */}
+        {/* Logout */}
         {user && (
           <button
             onClick={handleLogout}
-            className="bg-(--orange) text-white px-3 py-1 rounded"
+            style={{
+              backgroundColor: "var(--orange)",
+              color: "var(--text-color)",
+              padding: "0.375rem 1rem",
+              borderRadius: "0.375rem",
+              transition: "all 0.2s",
+              boxShadow: "0 4px 6px var(--shadow-color)",
+            }}
+            className="hover:scale-105 hover:shadow-lg"
           >
             Logout
           </button>
         )}
 
-        {/* theme toggle */}
-        {theme === "light" ? (
-          <FaMoon
-            size={24}
-            className="cursor-pointer text-(--orange)"
-            onClick={toggleTheme}
-          />
-        ) : (
-          <FaSun
-            size={24}
-            className="cursor-pointer text-(--orange)"
-            onClick={toggleTheme}
-          />
-        )}
+        {/* Theme toggle */}
+        <div
+          onClick={toggleTheme}
+          style={{
+            padding: "0.5rem",
+            borderRadius: "9999px",
+            backgroundColor: "transparent",
+            cursor: "pointer",
+          }}
+          className="hover:bg-[var(--orange)/20] transition"
+        >
+          {theme === "light" ? (
+            <FaMoon size={20} style={{ color: "var(--yellow)" }} />
+          ) : (
+            <FaSun size={20} style={{ color: "var(--yellow)" }} />
+          )}
+        </div>
       </div>
     </nav>
   );

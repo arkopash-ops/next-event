@@ -6,9 +6,8 @@ import { UserProfiles } from "@/types/userProfiles";
 import { User } from "@/types/users";
 import { useEffect, useState } from "react";
 
-export default function RegisterPage() {
+export default function AdminDashboard() {
   const [name, setName] = useState("");
-
   const [users, setUsers] = useState<User[]>([]);
   const [userProfiles, setUserProfiles] = useState<UserProfiles[]>([]);
   const [organizerProfiles, setOrganizerProfiles] = useState<
@@ -17,7 +16,6 @@ export default function RegisterPage() {
 
   useEffect(() => {
     const admin = localStorage.getItem("user");
-
     if (admin) {
       const parsedUser = JSON.parse(admin);
       (async () => {
@@ -39,18 +37,47 @@ export default function RegisterPage() {
   }, []);
 
   const renderTable = <T extends object>(title: string, data: T[]) => {
-    if (!data || data.length === 0) return <p>No data found</p>;
+    if (!data || data.length === 0)
+      return (
+        <p style={{ color: "var(--error)", marginTop: "0.5rem" }}>
+          No data found
+        </p>
+      );
 
     const headers = Object.keys(data[0]) as (keyof T)[];
 
     return (
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-2">{title}</h2>
-        <table className="table-auto border border-gray-400 w-full">
+      <div style={{ marginBottom: "2rem" }}>
+        <h2
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            marginBottom: "0.5rem",
+            color: "var(--purple)", // purple heading
+          }}
+        >
+          {title}
+        </h2>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            border: `1px solid var(--border-color)`,
+          }}
+        >
           <thead>
             <tr>
               {headers.map((key) => (
-                <th key={String(key)} className="border px-4 py-2">
+                <th
+                  key={String(key)}
+                  style={{
+                    border: `1px solid gray`,
+                    padding: "0.5rem",
+                    textAlign: "left",
+                    backgroundColor: "var(--bg-color)",
+                    color: "var(--purple)", // purple table headers
+                  }}
+                >
                   {String(key)}
                 </th>
               ))}
@@ -58,9 +85,22 @@ export default function RegisterPage() {
           </thead>
           <tbody>
             {data.map((item, idx) => (
-              <tr key={idx}>
+              <tr
+                key={idx}
+                style={{
+                  backgroundColor:
+                    idx % 2 === 0 ? "var(--bg-color)" : "var(--secondary)",
+                }}
+              >
                 {headers.map((key) => (
-                  <td key={String(key)} className="border px-4 py-2">
+                  <td
+                    key={String(key)}
+                    style={{
+                      border: `1px solid gray`,
+                      padding: "0.5rem",
+                      color: "var(--purple)",
+                    }}
+                  >
                     {typeof item[key] === "object"
                       ? JSON.stringify(item[key])
                       : String(item[key])}
@@ -76,8 +116,23 @@ export default function RegisterPage() {
 
   return (
     <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <div className="p-6">
-        <div className="text-3xl font-bold text-(--yellow)">
+      <div
+        style={{
+          padding: "1.5rem",
+          backgroundColor: "var(--bg-color)",
+          color: "var(--purple)",
+          minHeight: "100vh",
+          transition: "background-color 0.3s, color 0.3s",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "2rem",
+            fontWeight: "bold",
+            marginBottom: "2rem",
+            color: "var(--purple)",
+          }}
+        >
           Hello, {name || "Admin"}
         </div>
 

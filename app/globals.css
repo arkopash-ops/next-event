@@ -1,17 +1,61 @@
 @import "tailwindcss";
 
+:root {
+  --purple: #9b59b6;
+}
+
+/* Light theme */
 html.light {
   --bg-color: #d0d0d0;
   --brown: #a0522d;
   --orange: #ffa500;
   --yellow: #ffff00;
+
+  --text-color: #222222;          /* Main text */
+  --text-muted: #555555;          /* Secondary text */
+  --primary-color: #007bff;       /* Buttons, links */
+  --secondary-color: #6c757d;     /* Secondary buttons */
+  --border-color: #cccccc;        /* Borders */
+  --success-color: #28a745;       /* Success messages */
+  --error-color: #dc3545;         /* Error messages */
+  --warning-color: #ffc107;       /* Warnings */
+  --link-color: #0066cc;          /* Links */
+
+  /* New additions */
+  --card-bg: #ffffff;             /* Card or panel background */
+  --highlight: #fff3cd;           /* Highlighted text/background */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow for elements */
+  --accent1: #ff6f61;             /* Additional accent colors */
+  --accent2: #6a5acd;
+  --accent3: #20b2aa;
+  --gradient-primary: linear-gradient(45deg, #9b59b6, #ff69b4); /* Gradient example */
 }
 
+/* Dark theme */
 html.dark {
   --bg-color: #0d0d0d;
   --brown: #8b4513;
   --orange: #ff8c00;
   --yellow: #ffd902;
+
+  --text-color: #eeeeee;          /* Main text */
+  --text-muted: #bbbbbb;          /* Secondary text */
+  --primary-color: #3399ff;       /* Buttons, links */
+  --secondary-color: #888888;     /* Secondary buttons */
+  --border-color: #333333;        /* Borders */
+  --success-color: #28a745;       /* Success messages */
+  --error-color: #ff4d4d;         /* Error messages */
+  --warning-color: #ffcc00;       /* Warnings */
+  --link-color: #66b0ff;          /* Links */
+
+  /* New additions */
+  --card-bg: #1a1a1a;             /* Card or panel background */
+  --highlight: #333333;           /* Highlighted text/background */
+  --shadow-color: rgba(0, 0, 0, 0.6); /* Shadow for elements */
+  --accent1: #ff4500;             /* Additional accent colors */
+  --accent2: #9370db;
+  --accent3: #20b2aa;
+  --gradient-primary: linear-gradient(45deg, #8a2be2, #ff1493); /* Gradient example */
 }
 
 body {

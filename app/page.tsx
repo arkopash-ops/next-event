@@ -16,36 +16,50 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-6 transition-colors duration-300">
+    <div
+      className="min-h-screen flex flex-col items-center justify-start p-6 transition-colors duration-300"
+      style={{ background: "var(--bg-color)" }}
+    >
       {/* Hero Section */}
       <div
         className="w-full flex flex-col items-center justify-center text-center py-20 bg-cover bg-center rounded-lg mb-12 relative"
         style={{
           backgroundImage: "url('/images/hero-bg.png')",
-          color: "white",
         }}
       >
-        {/* White overlay */}
-        <div className="absolute inset-0 bg-(--bg-color) opacity-20 rounded-lg"></div>
+        {/* Overlay */}
+        <div
+          className="absolute inset-0 rounded-lg"
+          style={{ backgroundColor: "var(--bg-color)", opacity: 0.2 }}
+        ></div>
 
-        <h1 className="text-6xl font-extrabold text-(--yellow) mb-6 drop-shadow-lg relative">
+        <h1
+          className="text-6xl font-extrabold mb-6 drop-shadow-lg relative"
+          style={{ color: "var(--yellow)" }}
+        >
           NextEvent
         </h1>
-        <p className="text-2xl font-bold text-(--yellow) max-w-2xl drop-shadow-md mb-8 relative">
+        <p
+          className="text-2xl font-bold max-w-2xl drop-shadow-md mb-8 relative"
+          style={{ color: "var(--yellow)" }}
+        >
           Discover and book tickets for movies, comedy shows, sports events,
           plays, workshops, and fun activities near you.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 relative">
           <button
             onClick={() => router.push("/register")}
-            className="px-8 py-4 rounded-md hover:bg-yellow-400 transition font-semibold"
-            style={{ backgroundColor: "var(--orange)", color: "white" }}
+            className="px-8 py-4 rounded-md font-semibold transition hover:opacity-90"
+            style={{
+              backgroundColor: "var(--orange)",
+              color: "var(--text-color)",
+            }}
           >
             Register
           </button>
           <button
             onClick={() => router.push("/login")}
-            className="px-8 py-4 rounded-md border-2 font-semibold transition"
+            className="px-8 py-4 rounded-md border-2 font-semibold transition hover:opacity-90"
             style={{ borderColor: "var(--orange)", color: "var(--orange)" }}
           >
             Login
@@ -54,7 +68,6 @@ export default function Home() {
       </div>
 
       {/* Event Categories */}
-
       <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {eventCategories.map((category) => (
           <div key={category.title} className="flex flex-col items-center">
@@ -72,7 +85,10 @@ export default function Home() {
                 priority={category.title === "Movies"}
               />
             </div>
-            <h2 className="mt-2 text-center text-lg font-bold text-(--orange)">
+            <h2
+              className="mt-2 text-center text-lg font-bold"
+              style={{ color: "var(--orange)" }}
+            >
               {category.title}
             </h2>
           </div>
@@ -85,9 +101,12 @@ export default function Home() {
           Ready to find your next adventure? Start exploring now!
         </p>
         <button
-          onClick={() => router.push("/events")}
-          className="px-8 py-4 rounded-md hover:bg-yellow-400 transition font-semibold"
-          style={{ backgroundColor: "var(--orange)", color: "white" }}
+          onClick={() => router.push("/login")}
+          className="px-8 py-4 rounded-md font-semibold transition hover:opacity-90"
+          style={{
+            backgroundColor: "var(--orange)",
+            color: "var(--text-color)",
+          }}
         >
           Explore Events
         </button>
