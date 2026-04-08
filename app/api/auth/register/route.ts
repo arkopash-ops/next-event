@@ -7,11 +7,18 @@ import { signToken } from "@/lib/jwt";
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { name, email, password, role } = body;
+        const { name, email, password, role, companyName, description } = body;
 
         if (!name || !email || !password) {
             return NextResponse.json(
                 { message: "Missing required fields" },
+                { status: 400 }
+            );
+        }
+
+        if (role === "ORGANIZER" && !companyName) {
+            return NextResponse.json(
+                { message: "Company name is required for organizers" },
                 { status: 400 }
             );
         }
@@ -48,6 +55,8 @@ export async function POST(req: Request) {
         if (newUser.role === "ORGANIZER") {
             await db.insert(organizerProfiles).values({
                 userId: newUser.id,
+                companyName: companyName || null,
+                description: description || null,
             });
         }
 
