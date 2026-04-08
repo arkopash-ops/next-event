@@ -2,9 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuth();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -48,8 +51,7 @@ export default function RegisterPage() {
 
       const data = await res.json();
       if (res.ok) {
-        setMessage("Registration successful!");
-        localStorage.setItem("user", JSON.stringify(data.user));
+        login(data.user);
 
         setForm({
           name: "",

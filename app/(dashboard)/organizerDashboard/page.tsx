@@ -1,4 +1,5 @@
 "use client";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useEffect, useState } from "react";
 
 export default function OrganizerDashboardPage() {
@@ -15,8 +16,10 @@ export default function OrganizerDashboardPage() {
     }
   }, []);
   return (
-    <div className="text-3xl font-bold text-(--yellow)">
-      Hello, {name || "Organizer"}
-    </div>
+    <ProtectedRoute allowedRoles={["ORGANIZER"]}>
+      <div className="text-3xl font-bold text-(--yellow)">
+        Hello, {name || "Organizer"}
+      </div>
+    </ProtectedRoute>
   );
 }

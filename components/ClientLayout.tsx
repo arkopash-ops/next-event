@@ -19,12 +19,12 @@ export const ClientLayout = ({ children }: ClientLayoutProps) => {
 
   useEffect(() => {
     (async () => {
-      setMounted(true); // mark that client has mounted
+      setMounted(true);
     })();
   }, []);
 
   useEffect(() => {
-    if (!mounted) return; // don't run until mounted
+    if (!mounted) return;
     document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(theme);
     localStorage.setItem("theme", theme);
@@ -33,7 +33,7 @@ export const ClientLayout = ({ children }: ClientLayoutProps) => {
   const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
-  if (!mounted) return null; // avoid hydration mismatch
+  if (!mounted) return null;
 
   return (
     <>

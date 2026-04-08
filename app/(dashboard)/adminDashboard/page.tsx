@@ -1,4 +1,5 @@
 "use client";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useEffect, useState } from "react";
 
 export default function RegisterPage() {
@@ -15,8 +16,10 @@ export default function RegisterPage() {
     }
   }, []);
   return (
-    <div className="text-3xl font-bold text-(--yellow)">
-      Hello, {name || "Admin"}
-    </div>
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <div className="text-3xl font-bold text-(--yellow)">
+        Hello, {name || "Admin"}
+      </div>
+    </ProtectedRoute>
   );
 }

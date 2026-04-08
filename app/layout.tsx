@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ClientLayout } from '@/components/ClientLayout';
+import { ClientLayout } from "@/components/ClientLayout";
+import { AuthProvider } from "../context/AuthContext";
 
 export const metadata: Metadata = {
   title: "NextEvent",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body>
-        <ClientLayout>{children}</ClientLayout>
+        <AuthProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </AuthProvider>
       </body>
     </html>
   );

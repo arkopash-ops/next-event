@@ -1,15 +1,17 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const {login} = useAuth();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
   const [message, setMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,8 +39,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Login successful!");
-        localStorage.setItem("user", JSON.stringify(data.user));
+        login(data.user); 
 
         setForm({
           email: "",

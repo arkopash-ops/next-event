@@ -1,4 +1,5 @@
 "use client";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useEffect, useState } from "react";
 
 export default function UserDashboardPage() {
@@ -15,8 +16,10 @@ export default function UserDashboardPage() {
     }
   }, []);
   return (
-    <div className="text-3xl font-bold text-(--orange)">
-      Hello, {name || "User"}
-    </div>
+    <ProtectedRoute allowedRoles={["USER"]}>
+      <div className="text-3xl font-bold text-(--orange)">
+        Hello, {name || "User"}
+      </div>
+    </ProtectedRoute>
   );
 }
