@@ -45,7 +45,9 @@ export default function LoginPage() {
           password: "",
         });
 
-        if (data.user.role === "USER") {
+        if (data.user.role === "ADMIN") {
+          router.push("/adminDashboard");
+        } else if (data.user.role === "USER") {
           router.push("/userDashboard");
         } else if (data.user.role === "ORGANIZER") {
           router.push("/organizerDashboard");
