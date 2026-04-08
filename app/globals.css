@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 html.light {
-  --bg-color: #ffffff; /* white */
+  --bg-color: #d0d0d0;
   --brown: #a0522d;
   --orange: #ffa500;
   --yellow: #ffff00;
 }
 
 html.dark {
-  --bg-color: #000000; /* black */
+  --bg-color: #0d0d0d;
   --brown: #8b4513;
   --orange: #ff8c00;
-  --yellow: #ffd700;
+  --yellow: #ffd902;
 }
 
 body {

@@ -9,7 +9,7 @@ interface NavbarProps {
 
 export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
   return (
-    <nav className="p-4 flex justify-between items-center bg-(--brown) text-(--yellow)">
+    <nav className="p-4 flex justify-between items-center bg-(--brown) text-(--yellow) sticky top-0 z-50">
       <div className="font-bold text-xl">NextEvent</div>
       {theme === "light" ? (
         <FaMoon
