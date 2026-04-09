@@ -20,38 +20,28 @@ export default function OrganizerEventDetailPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  const fetchEvent = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/event/${id}`);
-      const data = await res.json();
-
-      if (res.ok && data.success && data.event) {
-        setEvent(data.event);
-        setForm({
-          title: data.event.title ?? "",
-          description: data.event.description ?? "",
-          category: data.event.category ?? "",
-          city: data.event.city ?? "",
-          venue: data.event.venue ?? "",
-          start_time: data.event.start_time ?? "",
-          end_time: data.event.end_time ?? "",
-        });
-        setMessage("");
-      } else {
-        setEvent(null);
-        setMessage(data.message || "Event not found");
-      }
-    } catch (err) {
-      console.error(err);
-      setEvent(null);
-      setMessage("Error fetching event");
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    (async () => fetchEvent())();
+    const fetchEvent = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/event/${id}`);
+        const data = await res.json();
+
+        if (res.ok && data.success && data.event) {
+          setEvent(data.event);
+          setForm(data.event);
+          console.log(data.event);
+        } else {
+          setMessage(data.message || "Event not found");
+        }
+      } catch (err) {
+        console.error(err);
+        setMessage("Error fetching event");
+      }
+      setLoading(false);
+    };
+
+    fetchEvent();
   }, [id]);
 
   const handleChange = (
@@ -72,15 +62,7 @@ export default function OrganizerEventDetailPage() {
       if (res.ok && data.success && data.event) {
         setMessage("Event updated successfully");
         setEvent(data.event);
-        setForm({
-          title: data.event.title ?? "",
-          description: data.event.description ?? "",
-          category: data.event.category ?? "",
-          city: data.event.city ?? "",
-          venue: data.event.venue ?? "",
-          start_time: data.event.start_time ?? "",
-          end_time: data.event.end_time ?? "",
-        });
+        setForm(data.event);
       } else setMessage(data.message || "Update failed");
     } catch (err) {
       console.error(err);
@@ -106,13 +88,6 @@ export default function OrganizerEventDetailPage() {
   if (loading) return <p>Loading...</p>;
   if (!event) return <p>{message || "Event not found"}</p>;
 
-  const startTimeValue = form.start_time
-    ? new Date(form.start_time).toISOString().slice(0, 16)
-    : "";
-  const endTimeValue = form.end_time
-    ? new Date(form.end_time).toISOString().slice(0, 16)
-    : "";
-
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Edit Event: {event.title}</h1>
@@ -130,13 +105,13 @@ export default function OrganizerEventDetailPage() {
       <input
         type="datetime-local"
         name="start_time"
-        value={startTimeValue}
+        value={new Date(form.start_time).toISOString().slice(0, 16)}
         onChange={handleChange}
       />
       <input
         type="datetime-local"
         name="end_time"
-        value={endTimeValue}
+        value={new Date(form.end_time).toISOString().slice(0, 16)}
         onChange={handleChange}
       />
 
