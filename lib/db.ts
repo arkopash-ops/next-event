@@ -1,9 +1,9 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { organizerProfiles, userProfiles, users } from "./schema";
+import { events, eventShows, organizerProfiles, userProfiles, users } from "./schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export const db = drizzle(pool, {
-    schema: { users, userProfiles, organizerProfiles }
+    schema: { users, userProfiles, organizerProfiles, events, eventShows }
 });
