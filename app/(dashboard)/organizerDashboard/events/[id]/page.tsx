@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Event } from "@/types/event";
+import { EVENT_CATEGORIES } from "@/types/eventCategories";
 
 export default function OrganizerEventDetailPage() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function OrganizerEventDetailPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    category: "",
+    category: EVENT_CATEGORIES[0],
     city: "",
     venue: "",
     start_time: "",
@@ -45,7 +46,9 @@ export default function OrganizerEventDetailPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -54,7 +57,7 @@ export default function OrganizerEventDetailPage() {
   const handleUpdate = async () => {
     try {
       const res = await fetch(`/api/event/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
@@ -99,7 +102,13 @@ export default function OrganizerEventDetailPage() {
         value={form.description}
         onChange={handleChange}
       />
-      <input name="category" value={form.category} onChange={handleChange} />
+      <select name="category" value={form.category} onChange={handleChange}>
+        {EVENT_CATEGORIES.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
       <input name="city" value={form.city} onChange={handleChange} />
       <input name="venue" value={form.venue} onChange={handleChange} />
       <input

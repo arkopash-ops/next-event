@@ -2,22 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const categories = [
-  "MOVIE",
-  "COMEDY",
-  "SPORTS",
-  "WORKSHOP",
-  "PLAY",
-  "ACTIVITY",
-] as const;
+import { EVENT_CATEGORIES } from "@/types/eventCategories";
 
 export default function NewOrganizerEventPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     title: "",
     description: "",
-    category: categories[0],
+    category: EVENT_CATEGORIES[0],
     city: "",
     venue: "",
     start_time: "",
@@ -27,7 +19,9 @@ export default function NewOrganizerEventPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -83,7 +77,7 @@ export default function NewOrganizerEventPage() {
           onChange={handleChange}
         />
         <select name="category" value={form.category} onChange={handleChange}>
-          {categories.map((category) => (
+          {EVENT_CATEGORIES.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
