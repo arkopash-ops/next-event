@@ -52,7 +52,14 @@ export default function RegisterPage() {
 
       const data = await res.json();
       if (res.ok) {
-        login(data.user);
+        const meRes = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const meData = await meRes.json();
+
+        if (meRes.ok) login(meData.user);
 
         setForm({
           name: "",
@@ -63,8 +70,8 @@ export default function RegisterPage() {
           description: "",
         });
 
-        if (data.user.role === "USER") router.push("/userDashboard");
-        else if (data.user.role === "ORGANIZER")
+        if (meData.user.role === "USER") router.push("/userDashboard");
+        else if (meData.user.role === "ORGANIZER")
           router.push("/organizerDashboard");
         else router.push("/");
       } else {

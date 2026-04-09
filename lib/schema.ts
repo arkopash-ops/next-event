@@ -29,3 +29,26 @@ export const organizerProfiles = pgTable("organizers_profiles", {
     description: text("description"),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+
+export const eventCategoryEnum = pgEnum("event_category", [
+    "MOVIE",
+    "COMEDY",
+    "SPORTS",
+    "WORKSHOP",
+    "PLAY",
+    "ACTIVITY"
+]);
+
+export const events = pgTable("events", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    description: text("description"),
+    category: eventCategoryEnum("category"),
+    organizer_id: uuid("organizer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    city: text("city").notNull(),
+    venue: text("venue").notNull(),
+    start_time: timestamp("start_time").notNull(),
+    end_time: timestamp("end_time").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});

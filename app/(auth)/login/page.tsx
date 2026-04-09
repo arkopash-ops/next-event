@@ -37,15 +37,25 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        login(data.user);
+        const meRes = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const meData = await meRes.json();
+
+        if (meRes.ok) login(meData.user);
+
         setForm({ email: "", password: "" });
 
-        if (data.user.role === "ADMIN") router.push("/adminDashboard");
-        else if (data.user.role === "USER") router.push("/userDashboard");
-        else if (data.user.role === "ORGANIZER")
+        if (meData.user.role === "ADMIN") router.push("/adminDashboard");
+        else if (meData.user.role === "USER") router.push("/userDashboard");
+        else if (meData.user.role === "ORGANIZER")
           router.push("/organizerDashboard");
         else router.push("/");
-      } else setMessage(data.error || "Login failed.");
+      } else {
+        setMessage(data.error || "Login failed.");
+      }
     } catch (err) {
       console.error(err);
       setMessage("Something went wrong.");
@@ -95,7 +105,11 @@ export default function LoginPage() {
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
             <label
-              style={{ marginBottom: "0.25rem", fontWeight: 500, color: "var(--text-color)" }}
+              style={{
+                marginBottom: "0.25rem",
+                fontWeight: 500,
+                color: "var(--text-color)",
+              }}
             >
               Email:
             </label>
@@ -111,14 +125,19 @@ export default function LoginPage() {
                 border: `1px solid var(--border-color)`,
                 backgroundColor: "var(--card-bg)",
                 color: "var(--text-color)",
-                transition: "border-color 0.2s, background-color 0.3s, color 0.3s",
+                transition:
+                  "border-color 0.2s, background-color 0.3s, color 0.3s",
               }}
             />
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
             <label
-              style={{ marginBottom: "0.25rem", fontWeight: 500, color: "var(--text-color)" }}
+              style={{
+                marginBottom: "0.25rem",
+                fontWeight: 500,
+                color: "var(--text-color)",
+              }}
             >
               Password:
             </label>
@@ -134,7 +153,8 @@ export default function LoginPage() {
                 border: `1px solid var(--border-color)`,
                 backgroundColor: "var(--card-bg)",
                 color: "var(--text-color)",
-                transition: "border-color 0.2s, background-color 0.3s, color 0.3s",
+                transition:
+                  "border-color 0.2s, background-color 0.3s, color 0.3s",
               }}
             />
           </div>
@@ -184,7 +204,10 @@ export default function LoginPage() {
           }}
         >
           New here?{" "}
-          <Link href="/register" style={{ color: "var(--link-color)", fontWeight: 500 }}>
+          <Link
+            href="/register"
+            style={{ color: "var(--link-color)", fontWeight: 500 }}
+          >
             Register
           </Link>
         </p>
