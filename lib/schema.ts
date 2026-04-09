@@ -1,4 +1,4 @@
-import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, integer, numeric, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", [
     "USER",
@@ -50,5 +50,15 @@ export const events = pgTable("events", {
     venue: text("venue").notNull(),
     start_time: timestamp("start_time").notNull(),
     end_time: timestamp("end_time").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const eventShows = pgTable("event_shows", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    event_id: uuid("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+    show_time: timestamp("show_time").notNull(),
+    total_seats: integer("total_seats").notNull(),
+    available_seats: integer("available_seats").notNull(),
+    price: numeric("price", { precision: 10, scale: 2 }).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
 });
