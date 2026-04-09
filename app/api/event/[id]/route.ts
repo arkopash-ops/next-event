@@ -55,7 +55,10 @@ export async function GET(
             );
         }
 
-        return NextResponse.json(event[0]);
+        return NextResponse.json({
+            success: true,
+            event: event[0],
+        });
     } catch (error) {
         console.error("Failed to fetch event:", error);
 
@@ -65,6 +68,7 @@ export async function GET(
         });
     }
 }
+
 
 export async function PATCH(
     req: Request,
@@ -131,7 +135,10 @@ export async function PATCH(
             );
         }
 
-        return NextResponse.json(updated[0]);
+        return NextResponse.json({
+            success: true,
+            event: updated[0],
+        });
     } catch (error) {
         console.error("Failed to update event:", error);
 
@@ -193,6 +200,7 @@ export async function DELETE(
         }
 
         return NextResponse.json({
+            success: true,
             message: "Event deleted",
         });
     } catch (error) {

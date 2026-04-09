@@ -75,25 +75,37 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
         )}
 
         {/* Role-based links */}
-        {user && (
-          <Link
-            href={
-              user.role === "ADMIN"
-                ? "/adminDashboard"
-                : user.role === "ORGANIZER"
-                  ? "/organizerDashboard"
-                  : "/userDashboard"
-            }
-            style={linkStyle(
-              user.role === "ADMIN"
-                ? "/adminDashboard"
-                : user.role === "ORGANIZER"
-                  ? "/organizerDashboard"
-                  : "/userDashboard",
-            )}
-          >
-            Dashboard
-          </Link>
+        {user && user.role === "ADMIN" && (
+          <div>
+            <Link href="/adminDashboard" style={linkStyle("/adminDashboard")}>
+              Dashboard
+            </Link>
+          </div>
+        )}
+
+        {user && user.role === "ORGANIZER" && (
+          <div>
+            <Link
+              href="/organizerDashboard"
+              style={linkStyle("/organizerDashboard")}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/organizerDashboard/events"
+              style={linkStyle("/organizerDashboard/events")}
+            >
+              Events
+            </Link>
+          </div>
+        )}
+
+        {user && user.role === "USER" && (
+          <div>
+            <Link href="/userDashboard" style={linkStyle("/userDashboard")}>
+              Dashboard
+            </Link>
+          </div>
         )}
 
         {/* Logout */}
@@ -101,7 +113,7 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
           <button
             onClick={handleLogout}
             style={{
-              backgroundColor: "var(--orange)",
+              backgroundColor: "red",
               color: "var(--text-color)",
               padding: "0.375rem 1rem",
               borderRadius: "0.375rem",
