@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(
     req: Request,
-    context: { params: Promise<{ id: string }> }
+    context: { params: Promise<{ eventId: string }> }
 ) {
     try {
-        const { id } = await context.params;
+        const { eventId } = await context.params;
 
         const rows = await db
             .select({
@@ -32,7 +32,7 @@ export async function GET(
             .leftJoin(users, eq(events.organizer_id, users.id))
             .leftJoin(organizerProfiles, eq(organizerProfiles.userId, users.id))
             .leftJoin(eventShows, eq(eventShows.event_id, events.id))
-            .where(eq(events.id, id));
+            .where(eq(events.id, eventId));
 
         if (!rows.length) {
             return NextResponse.json(
