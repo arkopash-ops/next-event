@@ -62,3 +62,51 @@ export const eventShows = pgTable("event_shows", {
     price: numeric("price", { precision: 10, scale: 2 }).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const bookingStatusEnum = pgEnum("booking_status", [
+    "CONFIRMED",
+    "CANCELLED",
+    "PENDING"
+]);
+
+export const bookings = pgTable("bookings", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    showId: uuid("show_id").notNull().references(() => eventShows.id, { onDelete: "cascade" }),
+    quantity: integer("quantity").notNull(),
+    totalPrice: numeric("total_price").notNull(),
+    status: bookingStatusEnum("status").notNull().default("CONFIRMED"),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const ticketStatusEnum = pgEnum("ticket_status", [
+    "UNUSED",
+    "USED",
+    "EXPIRED"
+]);
+
+export const tickets = pgTable("tickets", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookingId: uuid("booking_id").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+    showId: uuid("show_id").notNull().references(() => eventShows.id, { onDelete: "cascade" }),
+    ticketUid: text("ticket_uid").notNull().unique(),
+    status: ticketStatusEnum("status").notNull().default("UNUSED"),
+    usedAt: timestamp("used_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const paymentStatusEnum = pgEnum("payment_status", [
+    "SUCCESS",
+    "FAILED",
+    "PENDING",
+    "REFUNDED"
+]);
+
+export const payments = pgTable("payments", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookingId: uuid("booking_id").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+    amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+    status: paymentStatusEnum("status").notNull().default("SUCCESS"),
+    paymentMethod: text("payment_method"),
+    createdAt: timestamp("created_at").defaultNow(),
+});
