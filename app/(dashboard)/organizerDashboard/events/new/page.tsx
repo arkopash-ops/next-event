@@ -2,120 +2,55 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { EVENT_CATEGORIES } from "@/types/eventCategories";
 
-export default function NewOrganizerEventPage() {
+import EventForm from "../components/EventForm";
+import { EventFormData } from "@/types/event";
+
+export default function NewEventPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
+
+  const [form, setForm] = useState<EventFormData>({
     title: "",
     description: "",
-    category: EVENT_CATEGORIES[0],
+    category: "",
     city: "",
     venue: "",
     start_time: "",
     end_time: "",
   });
-  const [message, setMessage] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setMessage("");
 
-    try {
-      const res = await fetch("/api/event", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
+    const res = await fetch("/api/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
 
-      if (res.ok && data.success && data.event?.id) {
-        router.push(`/organizerDashboard/events/${data.event.id}`);
-        return;
-      }
+    const data = await res.json();
 
-      setMessage(data.message || "Failed to create event");
-    } catch (error) {
-      console.error(error);
-      setMessage("Error creating event");
-    } finally {
-      setSubmitting(false);
+    if (data.success && data.event?.id) {
+      router.push(`/organizerDashboard/events/${data.event.id}`);
     }
+
+    setSubmitting(false);
   };
 
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Create Event</h1>
-      {message && <p style={{ color: "red" }}>{message}</p>}
 
-      <form
+      <EventForm
+        form={form}
+        setForm={setForm}
         onSubmit={handleSubmit}
-        style={{ display: "grid", gap: "1rem", maxWidth: "32rem" }}
-      >
-        <input
-          required
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-        />
-        <select name="category" value={form.category} onChange={handleChange}>
-          {EVENT_CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-        <input
-          required
-          name="city"
-          placeholder="City"
-          value={form.city}
-          onChange={handleChange}
-        />
-        <input
-          required
-          name="venue"
-          placeholder="Venue"
-          value={form.venue}
-          onChange={handleChange}
-        />
-        <input
-          required
-          type="datetime-local"
-          name="start_time"
-          value={form.start_time}
-          onChange={handleChange}
-        />
-        <input
-          required
-          type="datetime-local"
-          name="end_time"
-          value={form.end_time}
-          onChange={handleChange}
-        />
-
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Creating..." : "Create Event"}
-        </button>
-      </form>
+        submitting={submitting}
+        isEditing={true}
+      />
     </div>
   );
 }
