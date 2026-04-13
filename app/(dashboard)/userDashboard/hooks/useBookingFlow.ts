@@ -150,6 +150,15 @@ export function useBookingFlow() {
     }
   };
 
+  const clearSelection = () => {
+    setSelectedEvent(null);
+    setSelectedShow(null);
+    setBookingId(null);
+    setBookingMessage("");
+    setTickets([]);
+    setQuantity(1);
+  };
+
   return {
     selectedEvent,
     selectedShow,
@@ -166,5 +175,6 @@ export function useBookingFlow() {
     createBooking,
     payForBooking,
     loadTickets,
+    clearSelection,
   };
 }
