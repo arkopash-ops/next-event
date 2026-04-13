@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { GroupedBooking } from "@/types/booking";
+import { useEffect, useState } from "react";
 
 export default function MyTicketsPage() {
   const [bookings, setBookings] = useState<GroupedBooking[]>([]);
@@ -26,78 +26,183 @@ export default function MyTicketsPage() {
     fetchTickets();
   }, []);
 
-  if (loading) return <p className="p-4">Loading tickets...</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          <div
+            className="rounded-2xl border border-dashed p-6 text-center"
+            style={{
+              color: "var(--text-muted)",
+              borderColor:
+                "color-mix(in srgb, var(--border-color) 80%, transparent)",
+              background: "color-mix(in srgb, var(--card-bg) 82%, transparent)",
+            }}
+          >
+            Loading tickets...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">My Tickets</h1>
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <section
+          className="rounded-3xl border px-6 py-8 backdrop-blur-sm sm:px-8"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
+          }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-[0.3em]"
+            style={{ color: "var(--accent1)" }}
+          >
+            My Tickets
+          </p>
+          <h1
+            className="text-3xl font-bold tracking-tight sm:text-4xl"
+            style={{ color: "var(--text-color)" }}
+          >
+            Your bookings
+          </h1>
+          <p
+            className="mt-2 text-sm leading-6 sm:text-base"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Review booking details and ticket statuses across all your events.
+          </p>
+        </section>
 
-      {bookings.length === 0 ? (
-        <p className="text-gray-500">No tickets found</p>
-      ) : (
-        <div className="space-y-6">
-          {bookings.map((booking) => (
-            <div
-              key={booking.bookingId}
-              className="p-5 border rounded-lg bg-white shadow-sm space-y-3"
-            >
-              {/* Booking Info */}
-              <div>
-                <p className="text-lg font-bold">Event: {booking.eventName}</p>
+        {bookings.length === 0 ? (
+          <div
+            className="rounded-2xl border border-dashed p-6 text-center"
+            style={{
+              color: "var(--text-muted)",
+              borderColor:
+                "color-mix(in srgb, var(--border-color) 80%, transparent)",
+              background: "color-mix(in srgb, var(--card-bg) 82%, transparent)",
+            }}
+          >
+            No tickets found.
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {bookings.map((booking) => (
+              <section
+                key={booking.bookingId}
+                className="rounded-3xl border p-6 backdrop-blur-sm"
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                  borderColor:
+                    "color-mix(in srgb, var(--border-color) 88%, transparent)",
+                  boxShadow: "0 18px 40px var(--shadow-color)",
+                }}
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="space-y-2">
+                    <p
+                      className="text-xs font-semibold uppercase tracking-[0.3em]"
+                      style={{ color: "var(--accent1)" }}
+                    >
+                      Booking
+                    </p>
+                    <h2
+                      className="text-2xl font-bold"
+                      style={{ color: "var(--text-color)" }}
+                    >
+                      {booking.eventName}
+                    </h2>
+                    <p
+                      className="text-sm leading-6 sm:text-base"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {new Date(booking.showTime).toLocaleString()}
+                    </p>
+                  </div>
 
-                <p>
-                  <span className="font-semibold">Show Time:</span>{" "}
-                  {new Date(booking.showTime).toLocaleString()}
-                </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span
+                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                        color: "var(--text-color)",
+                        border:
+                          "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                      }}
+                    >
+                      Qty {booking.quantity}
+                    </span>
+                    <span
+                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                        color: "var(--text-color)",
+                        border:
+                          "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                      }}
+                    >
+                      Total Rs. {booking.totalPrice}
+                    </span>
+                  </div>
+                </div>
 
-                <p>
-                  <span className="font-semibold">Quantity:</span>{" "}
-                  {booking.quantity}
-                </p>
-
-                <p>
-                  <span className="font-semibold">Total Price:</span> ₹
-                  {booking.totalPrice}
-                </p>
-              </div>
-
-              {/* Tickets inside booking */}
-              <div className="mt-3">
-                <p className="font-semibold mb-2">Tickets:</p>
-
-                <div className="space-y-2">
+                <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {booking.tickets.map((t) => (
                     <div
                       key={t.id}
-                      className="p-3 border rounded-md bg-gray-50"
+                      className="rounded-2xl border p-4"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                        borderColor:
+                          "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                      }}
                     >
-                      <p>
-                        <span className="font-semibold">Ticket UID:</span>{" "}
+                      <p
+                        className="text-xs font-semibold uppercase tracking-[0.2em]"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Ticket UID
+                      </p>
+                      <p className="mt-2 break-all text-sm font-medium">
                         {t.ticketUid}
                       </p>
 
-                      <p>
-                        <span className="font-semibold">Status:</span>{" "}
-                        <span
-                          className={
+                      <p
+                        className="mt-4 text-xs font-semibold uppercase tracking-[0.2em]"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Status
+                      </p>
+                      <p
+                        className="mt-2 text-sm font-bold"
+                        style={{
+                          color:
                             t.status === "EXPIRED"
-                              ? "text-gray-600"
+                              ? "var(--secondary-color)"
                               : t.status === "USED"
-                                ? "text-red-600"
-                                : "text-yellow-600"
-                          }
-                        >
-                          {t.status}
-                        </span>
+                                ? "var(--error-color)"
+                                : "var(--warning-color)",
+                        }}
+                      >
+                        {t.status}
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+              </section>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

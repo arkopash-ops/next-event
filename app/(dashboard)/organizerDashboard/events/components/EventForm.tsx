@@ -19,7 +19,9 @@ export default function EventForm({
   isEditing = true,
 }: EventFormProps) {
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -30,30 +32,196 @@ export default function EventForm({
   };
 
   return (
-    <form onSubmit={onSubmit} style={{ display: "grid", gap: "1rem" }}>
-      <input name="title" value={form.title} onChange={handleChange} disabled={!isEditing} />
+    <form onSubmit={onSubmit} className="grid gap-5 md:grid-cols-2">
+      <div className="md:col-span-2">
+        <label
+          htmlFor="title"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          Title
+        </label>
+        <input
+          id="title"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          placeholder="Event title"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
 
-      <textarea name="description" value={form.description} onChange={handleChange} disabled={!isEditing} />
+      <div className="md:col-span-2">
+        <label
+          htmlFor="description"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          Description
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="min-h-36 w-full rounded-xl border px-4 py-3 outline-none transition"
+          placeholder="Describe the event"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
 
-      <select name="category" value={form.category} onChange={handleChange} disabled={!isEditing}>
-        {EVENT_CATEGORIES.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label
+          htmlFor="category"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          Category
+        </label>
+        <select
+          id="category"
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        >
+          <option value="">Select a category</option>
+          {EVENT_CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <input name="city" value={form.city} onChange={handleChange} disabled={!isEditing} />
-      <input name="venue" value={form.venue} onChange={handleChange} disabled={!isEditing} />
+      <div>
+        <label
+          htmlFor="city"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          City
+        </label>
+        <input
+          id="city"
+          name="city"
+          value={form.city}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          placeholder="Event city"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
 
-      <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleChange} disabled={!isEditing} />
+      <div>
+        <label
+          htmlFor="venue"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          Venue
+        </label>
+        <input
+          id="venue"
+          name="venue"
+          value={form.venue}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          placeholder="Venue name"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
 
-      <input type="datetime-local" name="end_time" value={form.end_time} onChange={handleChange} disabled={!isEditing} />
+      <div>
+        <label
+          htmlFor="start_time"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          Start Time
+        </label>
+        <input
+          id="start_time"
+          type="datetime-local"
+          name="start_time"
+          value={form.start_time}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor="end_time"
+          className="mb-2 block text-sm font-semibold"
+          style={{ color: "var(--text-color)" }}
+        >
+          End Time
+        </label>
+        <input
+          id="end_time"
+          type="datetime-local"
+          name="end_time"
+          value={form.end_time}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full rounded-xl border px-4 py-3 outline-none transition"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            color: "var(--text-color)",
+            borderColor: "var(--border-color)",
+          }}
+        />
+      </div>
 
       {isEditing && (
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Saving..." : "Save"}
-        </button>
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              background: "var(--gradient-primary)",
+              boxShadow:
+                "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+            }}
+          >
+            {submitting ? "Saving..." : "Save"}
+          </button>
+        </div>
       )}
     </form>
   );

@@ -1,9 +1,9 @@
 "use client";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Ticket } from "@/types/tickets";
 import { Shows } from "@/types/shows";
 import { useEffect, useState } from "react";
-import { Ticket } from "@/types/tickets";
 
 interface Event {
   id: string;
@@ -14,10 +14,8 @@ interface Event {
   venue: string;
   start_time: string;
   end_time: string;
-
   organizerName?: string;
   companyName?: string;
-
   shows?: Shows[];
 }
 
@@ -39,7 +37,6 @@ export default function UserDashboardPage() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
-  // Load user
   useEffect(() => {
     const user = localStorage.getItem("user");
 
@@ -51,7 +48,6 @@ export default function UserDashboardPage() {
     }
   }, []);
 
-  // Load events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -76,13 +72,16 @@ export default function UserDashboardPage() {
 
       if (data.success) {
         setSelectedEvent(data.event);
+        setSelectedShow(null);
+        setBookingId(null);
+        setBookingMessage("");
+        setTickets([]);
       }
     } catch (error) {
       console.error("Failed to fetch event:", error);
     }
   };
 
-  // Fetching show details
   const handleShowClick = async (showId: string) => {
     if (!selectedEvent) return;
 
@@ -105,7 +104,6 @@ export default function UserDashboardPage() {
     }
   };
 
-  // Booking shows
   const handleBooking = async () => {
     if (!selectedEvent || !selectedShow) return;
 
@@ -140,7 +138,6 @@ export default function UserDashboardPage() {
     }
   };
 
-  // Payment
   const handlePayment = async () => {
     if (!bookingId || !selectedEvent || !selectedShow) return;
 
@@ -182,12 +179,10 @@ export default function UserDashboardPage() {
       if (data.success) {
         const formattedTickets: Ticket[] = data.tickets.map(
           (t: TicketApiResponse, index: number) => ({
-            id: `${bookingId}-${index}`, // temporary safe key
+            id: `${bookingId}-${index}`,
             ticketUid: t.ticketUid,
             status: t.status ?? "UNUSED",
-
-            // keep compatibility with your type
-            bookingId: bookingId,
+            bookingId,
             eventName: selectedEvent.title,
             showTime: selectedShow.show_time,
             showId: selectedShow.id,
@@ -205,194 +200,459 @@ export default function UserDashboardPage() {
 
   return (
     <ProtectedRoute allowedRoles={["USER"]}>
-      <div className="p-6 space-y-6">
-        {/* HEADER */}
-        <div className="text-3xl font-bold text-orange-500">
-          Hello, {name || "User"}
-        </div>
+      <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          <section
+            className="rounded-3xl border px-6 py-8 backdrop-blur-sm sm:px-8"
+            style={{
+              background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+              borderColor:
+                "color-mix(in srgb, var(--border-color) 88%, transparent)",
+              boxShadow: "0 18px 40px var(--shadow-color)",
+            }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-[0.3em]"
+              style={{ color: "var(--accent1)" }}
+            >
+              User Dashboard
+            </p>
+            <h1
+              className="text-3xl font-bold tracking-tight sm:text-4xl"
+              style={{ color: "var(--text-color)" }}
+            >
+              Hello, {name || "User"}
+            </h1>
+            <p
+              className="mt-2 text-sm leading-6 sm:text-base"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Browse public events, pick a show, and move from booking to
+              tickets without leaving the page.
+            </p>
+          </section>
 
-        {/* MAIN LAYOUT */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* EVENTS LIST */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">All Events</h2>
-
-            <div className="space-y-3">
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  onClick={() => handleEventClick(event.id)}
-                  className="p-4 border rounded cursor-pointer hover:bg-gray-100 transition"
+          <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+            <section
+              className="rounded-3xl border p-6 backdrop-blur-sm"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                borderColor:
+                  "color-mix(in srgb, var(--border-color) 88%, transparent)",
+                boxShadow: "0 18px 40px var(--shadow-color)",
+              }}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h2
+                  className="text-2xl font-bold"
+                  style={{ color: "var(--text-color)" }}
                 >
-                  <h3 className="font-bold">{event.title}</h3>
+                  All Events
+                </h2>
+                <span
+                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                    color: "var(--text-color)",
+                    border:
+                      "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                  }}
+                >
+                  {events.length} listed
+                </span>
+              </div>
 
-                  <p>{event.description}</p>
-
-                  <p className="text-sm text-gray-600">{event.category}</p>
-
-                  <p className="text-sm text-gray-600">{event.city}</p>
-
-                  <p className="text-xs text-gray-400">
-                    {event.organizerName} • {event.companyName}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* EVENT DETAILS */}
-          <div>
-            {selectedEvent ? (
-              <div className="p-4 border rounded space-y-3">
-                {/* TITLE */}
-                <h2 className="text-2xl font-bold">{selectedEvent.title}</h2>
-
-                {/* DESCRIPTION */}
-                <p className="text-gray-600">{selectedEvent.description}</p>
-
-                {/* LOCATION */}
-                <p>
-                  {selectedEvent.city} - {selectedEvent.venue}
-                </p>
-
-                {/* ORGANIZER */}
-                <p className="text-sm text-gray-500">
-                  Organizer: {selectedEvent.organizerName}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                  Company: {selectedEvent.companyName}
-                </p>
-
-                {/* SHOWS */}
-                <div>
-                  <h3 className="mt-4 font-bold text-lg">Shows</h3>
-
-                  {selectedEvent.shows && selectedEvent.shows.length > 0 ? (
-                    <div className="space-y-2 mt-2">
-                      {selectedEvent.shows.map((show) => (
-                        <div
-                          key={show.id}
-                          onClick={() => handleShowClick(show.id)}
-                          className="p-3 border rounded flex justify-between items-center cursor-pointer hover:bg-gray-100"
+              <div className="mt-6 space-y-4">
+                {events.map((event) => (
+                  <button
+                    key={event.id}
+                    onClick={() => handleEventClick(event.id)}
+                    className="block w-full cursor-pointer rounded-2xl border p-5 text-left transition hover:-translate-y-0.5"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                      borderColor:
+                        "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                    }}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p
+                          className="text-xs font-semibold uppercase tracking-[0.3em]"
+                          style={{ color: "var(--accent1)" }}
                         >
-                          <span>
-                            {new Date(show.show_time).toLocaleString()}
-                          </span>
-
-                          <span>
-                            {show.available_seats}/{show.total_seats}
-                          </span>
-
-                          <span className="font-bold text-orange-600">
-                            ₹{show.price}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 mt-2">No shows available</p>
-                  )}
-                </div>
-
-                {/* SHOW DETAILS */}
-                {loadingShow && (
-                  <p className="text-sm text-gray-500">
-                    Loading show details...
-                  </p>
-                )}
-
-                {selectedShow && (
-                  <div className="mt-4 p-4 border rounded bg-gray-50 space-y-3">
-                    <h4 className="font-bold text-lg">Selected Show</h4>
-
-                    <p>
-                      Time: {new Date(selectedShow.show_time).toLocaleString()}
-                    </p>
-
-                    <p>Price: ₹{selectedShow.price}</p>
-
-                    <p>
-                      Seats: {selectedShow.available_seats} /{" "}
-                      {selectedShow.total_seats}
-                    </p>
-
-                    <div className="flex items-center gap-3">
-                      <label>Tickets:</label>
-                      <input
-                        type="number"
-                        min={1}
-                        max={selectedShow.available_seats}
-                        value={quantity}
-                        onChange={(e) => setQuantity(Number(e.target.value))}
-                        className="border px-2 py-1 w-20"
-                      />
+                          {event.category}
+                        </p>
+                        <h3
+                          className="mt-2 text-xl font-bold"
+                          style={{ color: "var(--text-color)" }}
+                        >
+                          {event.title}
+                        </h3>
+                      </div>
+                      <span
+                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                        style={{
+                          background:
+                            "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                          color: "var(--text-color)",
+                          border:
+                            "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                        }}
+                      >
+                        {event.city}
+                      </span>
                     </div>
 
-                    <p className="font-medium">
-                      Total: ₹{Number(selectedShow.price) * quantity}
-                    </p>
-
-                    <button
-                      onClick={handleBooking}
-                      disabled={
-                        bookingLoading || selectedShow.available_seats === 0
-                      }
-                      className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 disabled:opacity-50"
+                    <p
+                      className="mt-3 text-sm leading-6 sm:text-base"
+                      style={{ color: "var(--text-muted)" }}
                     >
-                      {bookingLoading ? "Booking..." : "Book Now"}
-                    </button>
+                      {event.description}
+                    </p>
 
-                    {/* 💳 PAYMENT BUTTON */}
-                    {bookingId && (
-                      <button
-                        onClick={handlePayment}
-                        disabled={paymentLoading}
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-2"
+                    <p
+                      className="mt-4 text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {event.organizerName} | {event.companyName}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section
+              className="rounded-3xl border p-6 backdrop-blur-sm"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                borderColor:
+                  "color-mix(in srgb, var(--border-color) 88%, transparent)",
+                boxShadow: "0 18px 40px var(--shadow-color)",
+              }}
+            >
+              {selectedEvent ? (
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      <span
+                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                        style={{
+                          background:
+                            "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                          color: "var(--text-color)",
+                          border:
+                            "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                        }}
                       >
-                        {paymentLoading ? "Processing..." : "Pay Now"}
-                      </button>
-                    )}
-
-                    {/* FETCH TICKETS */}
-                    {bookingId && (
-                      <button
-                        onClick={fetchTickets}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2 ml-2"
+                        {selectedEvent.category}
+                      </span>
+                      <span
+                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                        style={{
+                          background:
+                            "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                          color: "var(--text-color)",
+                          border:
+                            "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                        }}
                       >
-                        Get Tickets
-                      </button>
-                    )}
+                        {selectedEvent.city}
+                      </span>
+                    </div>
+                    <h2
+                      className="text-3xl font-bold"
+                      style={{ color: "var(--text-color)" }}
+                    >
+                      {selectedEvent.title}
+                    </h2>
+                    <p
+                      className="text-sm leading-6 sm:text-base"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      {selectedEvent.description}
+                    </p>
+                    <div
+                      className="text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      <p>
+                        {selectedEvent.city} | {selectedEvent.venue}
+                      </p>
+                      <p>Organizer: {selectedEvent.organizerName}</p>
+                      <p>Company: {selectedEvent.companyName}</p>
+                    </div>
+                  </div>
 
-                    {/* TICKETS DISPLAY */}
-                    {tickets.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="font-bold">Your Tickets</h4>
+                  <div>
+                    <h3 className="text-xl font-bold">Shows</h3>
 
-                        <div className="space-y-2 mt-2">
-                          {tickets.map((ticket) => (
-                            <div
-                              key={ticket.id}
-                              className="p-2 border rounded bg-white"
+                    {selectedEvent.shows && selectedEvent.shows.length > 0 ? (
+                      <div className="mt-4 space-y-3">
+                        {selectedEvent.shows.map((show) => (
+                          <button
+                            key={show.id}
+                            onClick={() => handleShowClick(show.id)}
+                            className="flex w-full flex-col gap-3 rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 sm:flex-row sm:items-center sm:justify-between"
+                            style={{
+                              background:
+                                "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                              borderColor:
+                                "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                            }}
+                          >
+                            <span>
+                              {new Date(show.show_time).toLocaleString()}
+                            </span>
+                            <span
+                              className="text-sm"
+                              style={{ color: "var(--text-muted)" }}
                             >
-                              {ticket.ticketUid} — {ticket.status}
-                            </div>
-                          ))}
-                        </div>
+                              {show.available_seats}/{show.total_seats} seats
+                            </span>
+                            <span
+                              className="text-lg font-bold"
+                              style={{ color: "var(--accent1)" }}
+                            >
+                              Rs. {show.price}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div
+                        className="mt-4 rounded-2xl border border-dashed p-6 text-center"
+                        style={{
+                          color: "var(--text-muted)",
+                          borderColor:
+                            "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                          background:
+                            "color-mix(in srgb, var(--card-bg) 82%, transparent)",
+                        }}
+                      >
+                        No shows available.
                       </div>
                     )}
-
-                    {bookingMessage && (
-                      <p className="text-sm">{bookingMessage}</p>
-                    )}
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-gray-500">
-                Click an event to view details
-              </div>
-            )}
+
+                  {loadingShow && (
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Loading show details...
+                    </p>
+                  )}
+
+                  {selectedShow && (
+                    <div
+                      className="space-y-5 rounded-2xl border p-5"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                        borderColor:
+                          "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                      }}
+                    >
+                      <div className="space-y-2">
+                        <p
+                          className="text-xs font-semibold uppercase tracking-[0.3em]"
+                          style={{ color: "var(--accent1)" }}
+                        >
+                          Selected Show
+                        </p>
+                        <h4
+                          className="text-2xl font-bold"
+                          style={{ color: "var(--text-color)" }}
+                        >
+                          {new Date(selectedShow.show_time).toLocaleString()}
+                        </h4>
+                        <p
+                          className="text-sm leading-6 sm:text-base"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          Seats: {selectedShow.available_seats} /{" "}
+                          {selectedShow.total_seats}
+                        </p>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div
+                          className="rounded-2xl border p-4"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                            borderColor:
+                              "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                          }}
+                        >
+                          <p
+                            className="text-sm font-semibold"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            Ticket Price
+                          </p>
+                          <p
+                            className="mt-2 text-2xl font-bold"
+                            style={{ color: "var(--text-color)" }}
+                          >
+                            Rs. {selectedShow.price}
+                          </p>
+                        </div>
+                        <div
+                          className="rounded-2xl border p-4"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                            borderColor:
+                              "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                          }}
+                        >
+                          <label
+                            htmlFor="quantity"
+                            className="mb-2 block text-sm font-semibold"
+                            style={{ color: "var(--text-color)" }}
+                          >
+                            Tickets
+                          </label>
+                          <input
+                            id="quantity"
+                            type="number"
+                            min={1}
+                            max={selectedShow.available_seats}
+                            value={quantity}
+                            onChange={(e) =>
+                              setQuantity(Number(e.target.value))
+                            }
+                            className="w-full rounded-xl border px-4 py-3 outline-none transition"
+                            style={{
+                              background:
+                                "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                              color: "var(--text-color)",
+                              borderColor: "var(--border-color)",
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <p
+                        className="text-lg font-semibold"
+                        style={{ color: "var(--text-color)" }}
+                      >
+                        Total: Rs. {Number(selectedShow.price) * quantity}
+                      </p>
+
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={handleBooking}
+                          disabled={
+                            bookingLoading || selectedShow.available_seats === 0
+                          }
+                          className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                          style={{
+                            background: "var(--gradient-primary)",
+                            boxShadow:
+                              "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+                          }}
+                        >
+                          {bookingLoading ? "Booking..." : "Book Now"}
+                        </button>
+
+                        {bookingId && (
+                          <button
+                            onClick={handlePayment}
+                            disabled={paymentLoading}
+                            className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+                            style={{
+                              background:
+                                "color-mix(in srgb, var(--success-color) 18%, var(--card-bg))",
+                              color: "var(--success-color)",
+                              borderColor:
+                                "color-mix(in srgb, var(--success-color) 45%, var(--border-color))",
+                            }}
+                          >
+                            {paymentLoading ? "Processing..." : "Pay Now"}
+                          </button>
+                        )}
+
+                        {bookingId && (
+                          <button
+                            onClick={fetchTickets}
+                            className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition"
+                            style={{
+                              background:
+                                "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                              color: "var(--text-color)",
+                              borderColor: "var(--border-color)",
+                            }}
+                          >
+                            Get Tickets
+                          </button>
+                        )}
+                      </div>
+
+                      {tickets.length > 0 && (
+                        <div className="space-y-3">
+                          <h4 className="text-lg font-bold">Your Tickets</h4>
+                          <div className="grid gap-3">
+                            {tickets.map((ticket) => (
+                              <div
+                                key={ticket.id}
+                                className="rounded-2xl border p-4"
+                                style={{
+                                  background:
+                                    "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                                  borderColor:
+                                    "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                                }}
+                              >
+                                <p className="break-all text-sm font-medium">
+                                  {ticket.ticketUid}
+                                </p>
+                                <p
+                                  className="mt-2 text-sm"
+                                  style={{ color: "var(--text-muted)" }}
+                                >
+                                  Status: {ticket.status}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {bookingMessage && (
+                        <p
+                          className="rounded-2xl px-4 py-3 text-sm font-medium"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--highlight) 68%, var(--card-bg))",
+                          }}
+                        >
+                          {bookingMessage}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  className="rounded-2xl border border-dashed p-6 text-center"
+                  style={{
+                    color: "var(--text-muted)",
+                    borderColor:
+                      "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 82%, transparent)",
+                  }}
+                >
+                  Click an event to view details.
+                </div>
+              )}
+            </section>
           </div>
         </div>
       </div>

@@ -15,6 +15,27 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
   const router = useRouter();
   const pathName = usePathname();
 
+  const navLinkClass =
+    "inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition duration-200";
+
+  const linkStyle = (path: string) => ({
+    background:
+      pathName === path
+        ? "var(--gradient-primary)"
+        : "color-mix(in srgb, var(--card-bg) 94%, transparent)",
+    color: pathName === path ? "#ffffff" : "var(--text-color)",
+    border: `1px solid ${
+      pathName === path
+        ? "color-mix(in srgb, var(--accent2) 55%, transparent)"
+        : "color-mix(in srgb, var(--border-color) 80%, transparent)"
+    }`,
+    boxShadow:
+      pathName === path
+        ? "0 12px 24px color-mix(in srgb, var(--accent2) 24%, transparent)"
+        : "none",
+    cursor: "pointer",
+  });
+
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", {
@@ -33,120 +54,133 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
     }
   };
 
-  const linkStyle = (path: string) => ({
-    padding: "0.25rem 0.75rem",
-    borderRadius: "0.375rem",
-    transition: "all 0.2s",
-    backgroundColor: pathName === path ? "var(--orange)" : "transparent",
-    color: pathName === path ? "var(--text-color)" : "var(--yellow)",
-    boxShadow: pathName === path ? "0 4px 6px var(--shadow-color)" : "none",
-    cursor: "pointer",
-  });
-
   return (
     <nav
+      className="sticky top-0 z-50 border-b px-4 py-3 sm:px-6"
       style={{
-        backgroundColor: "var(--brown)",
-        color: "var(--yellow)",
-        backdropFilter: "blur(6px)",
-        boxShadow: "0 2px 8px var(--shadow-color)",
+        background: "color-mix(in srgb, var(--card-bg) 84%, transparent)",
+        borderColor: "color-mix(in srgb, var(--border-color) 78%, transparent)",
+        color: "var(--text-color)",
+        backdropFilter: "blur(14px)",
+        boxShadow: "0 8px 24px var(--shadow-color)",
       }}
-      className="px-6 py-3 flex justify-between items-center sticky top-0 z-50"
     >
-      {/* Logo */}
-      <div className="font-extrabold text-2xl tracking-wide">
-        Next<span style={{ color: "var(--orange)" }}>Event</span>
-      </div>
-
-      <div className="flex items-center gap-5">
-        {/* Auth links */}
-        {!user && (
-          <>
-            <Link href="/" style={linkStyle("/")}>
-              Home
-            </Link>
-            <Link href="/login" style={linkStyle("/login")}>
-              Login
-            </Link>
-            <Link href="/register" style={linkStyle("/register")}>
-              Register
-            </Link>
-          </>
-        )}
-
-        {/* Role-based links */}
-        {user && user.role === "ADMIN" && (
-          <div>
-            <Link href="/adminDashboard" style={linkStyle("/adminDashboard")}>
-              Dashboard
-            </Link>
-          </div>
-        )}
-
-        {user && user.role === "ORGANIZER" && (
-          <div>
-            <Link
-              href="/organizerDashboard"
-              style={linkStyle("/organizerDashboard")}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/organizerDashboard/events"
-              style={linkStyle("/organizerDashboard/events")}
-            >
-              Events
-            </Link>
-          </div>
-        )}
-
-        {user && user.role === "USER" && (
-          <div>
-            <Link href="/userDashboard" style={linkStyle("/userDashboard")}>
-              Dashboard
-            </Link>
-            <Link
-              href="/userDashboard/tickets"
-              style={linkStyle("/userDashboard/tickets")}
-            >
-              My Tickets
-            </Link>
-          </div>
-        )}
-
-        {/* Logout */}
-        {user && (
-          <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: "red",
-              color: "var(--text-color)",
-              padding: "0.375rem 1rem",
-              borderRadius: "0.375rem",
-              transition: "all 0.2s",
-              boxShadow: "0 4px 6px var(--shadow-color)",
-            }}
-            className="hover:scale-105 hover:shadow-lg"
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center justify-between gap-4">
+          <div
+            className="font-extrabold text-2xl tracking-wide"
+            style={{ color: "var(--text-color)" }}
           >
-            Logout
-          </button>
-        )}
+            Next<span style={{ color: "var(--accent1)" }}>Event</span>
+          </div>
 
-        {/* Theme toggle */}
-        <div
-          onClick={toggleTheme}
-          style={{
-            padding: "0.5rem",
-            borderRadius: "9999px",
-            backgroundColor: "transparent",
-            cursor: "pointer",
-          }}
-          className="hover:bg-[var(--orange)/20] transition"
-        >
-          {theme === "light" ? (
-            <FaMoon size={20} style={{ color: "var(--yellow)" }} />
-          ) : (
-            <FaSun size={20} style={{ color: "var(--yellow)" }} />
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border transition duration-200"
+            style={{
+              background: "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+              borderColor:
+                "color-mix(in srgb, var(--border-color) 80%, transparent)",
+              color: "var(--text-color)",
+            }}
+          >
+            {theme === "light" ? <FaMoon size={18} /> : <FaSun size={18} />}
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Auth links */}
+          {!user && (
+            <>
+              <Link href="/" className={navLinkClass} style={linkStyle("/")}>
+                Home
+              </Link>
+              <Link
+                href="/login"
+                className={navLinkClass}
+                style={linkStyle("/login")}
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className={navLinkClass}
+                style={linkStyle("/register")}
+              >
+                Register
+              </Link>
+            </>
+          )}
+
+          {/* Role-based links */}
+          {user && user.role === "ADMIN" && (
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/adminDashboard"
+                className={navLinkClass}
+                style={linkStyle("/adminDashboard")}
+              >
+                Dashboard
+              </Link>
+            </div>
+          )}
+
+          {user && user.role === "ORGANIZER" && (
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/organizerDashboard"
+                className={navLinkClass}
+                style={linkStyle("/organizerDashboard")}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/organizerDashboard/events"
+                className={navLinkClass}
+                style={linkStyle("/organizerDashboard/events")}
+              >
+                Events
+              </Link>
+            </div>
+          )}
+
+          {user && user.role === "USER" && (
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/userDashboard"
+                className={navLinkClass}
+                style={linkStyle("/userDashboard")}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/userDashboard/tickets"
+                className={navLinkClass}
+                style={linkStyle("/userDashboard/tickets")}
+              >
+                My Tickets
+              </Link>
+            </div>
+          )}
+
+          {/* Logout */}
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition duration-200"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--error-color) 18%, var(--card-bg))",
+                color: "var(--error-color)",
+                borderColor:
+                  "color-mix(in srgb, var(--error-color) 45%, var(--border-color))",
+                boxShadow:
+                  "0 10px 20px color-mix(in srgb, var(--error-color) 12%, transparent)",
+              }}
+            >
+              Logout
+            </button>
           )}
         </div>
       </div>

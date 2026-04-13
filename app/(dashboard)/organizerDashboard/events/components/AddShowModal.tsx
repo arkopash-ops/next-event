@@ -1,6 +1,5 @@
 import { ShowForm } from "@/types/shows";
 
-
 type AddShowModalProps = {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,9 +19,7 @@ export default function AddShowModal({
 }: AddShowModalProps) {
   if (!showModal) return null;
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setNewShow((prev) => ({
@@ -36,56 +33,130 @@ export default function AddShowModal({
 
   return (
     <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
     >
       <div
+        className="w-full max-w-md rounded-3xl border p-6 backdrop-blur-sm sm:p-8"
         style={{
-          background: "#fff",
-          padding: "2rem",
-          borderRadius: "8px",
-          width: "320px",
+          background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+          borderColor:
+            "color-mix(in srgb, var(--border-color) 88%, transparent)",
+          boxShadow: "0 18px 40px var(--shadow-color)",
         }}
       >
-        <h2>{title}</h2>
+        <div className="space-y-2">
+          <p
+            className="text-xs font-semibold uppercase tracking-[0.3em]"
+            style={{ color: "var(--accent1)" }}
+          >
+            Show Manager
+          </p>
+          <h2
+            className="text-2xl font-bold"
+            style={{ color: "var(--text-color)" }}
+          >
+            {title}
+          </h2>
+        </div>
 
-        <label>Show Time:</label>
-        <input
-          type="datetime-local"
-          name="show_time"
-          value={newShow.show_time}
-          onChange={handleChange}
-          min={new Date().toISOString().slice(0, 16)}
-        />
+        <div className="mt-6 space-y-4">
+          <div>
+            <label
+              htmlFor="show_time"
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "var(--text-color)" }}
+            >
+              Show Time
+            </label>
+            <input
+              id="show_time"
+              type="datetime-local"
+              name="show_time"
+              value={newShow.show_time}
+              onChange={handleChange}
+              min={new Date().toISOString().slice(0, 16)}
+              className="w-full rounded-xl border px-4 py-3 outline-none transition"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                color: "var(--text-color)",
+                borderColor: "var(--border-color)",
+              }}
+            />
+          </div>
 
-        <label>Total Seats:</label>
-        <input
-          type="number"
-          name="total_seats"
-          value={newShow.total_seats}
-          onChange={handleChange}
-        />
+          <div>
+            <label
+              htmlFor="total_seats"
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "var(--text-color)" }}
+            >
+              Total Seats
+            </label>
+            <input
+              id="total_seats"
+              type="number"
+              name="total_seats"
+              value={newShow.total_seats}
+              onChange={handleChange}
+              className="w-full rounded-xl border px-4 py-3 outline-none transition"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                color: "var(--text-color)",
+                borderColor: "var(--border-color)",
+              }}
+            />
+          </div>
 
-        <label>Price:</label>
-        <input
-          type="number"
-          name="price"
-          value={newShow.price}
-          onChange={handleChange}
-        />
+          <div>
+            <label
+              htmlFor="price"
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "var(--text-color)" }}
+            >
+              Price
+            </label>
+            <input
+              id="price"
+              type="number"
+              name="price"
+              value={newShow.price}
+              onChange={handleChange}
+              className="w-full rounded-xl border px-4 py-3 outline-none transition"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                color: "var(--text-color)",
+                borderColor: "var(--border-color)",
+              }}
+            />
+          </div>
+        </div>
 
-        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-          <button onClick={onSubmit}>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            onClick={onSubmit}
+            className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5"
+            style={{
+              background: "var(--gradient-primary)",
+              boxShadow:
+                "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+            }}
+          >
             {buttonText}
           </button>
 
-          <button onClick={() => setShowModal(false)}>
+          <button
+            onClick={() => setShowModal(false)}
+            className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition"
+            style={{
+              background: "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+              color: "var(--text-color)",
+              borderColor: "var(--border-color)",
+            }}
+          >
             Cancel
           </button>
         </div>

@@ -1,15 +1,13 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
-
-import { useEvent } from "../hooks/useEvent";
-import EventForm from "../components/EventForm";
-import ShowsTable from "../components/ShowsTable";
-import AddShowModal from "../components/AddShowModal";
-
 import { EventFormData } from "@/types/event";
 import { Shows } from "@/types/shows";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import AddShowModal from "../components/AddShowModal";
+import EventForm from "../components/EventForm";
+import ShowsTable from "../components/ShowsTable";
+import { useEvent } from "../hooks/useEvent";
 
 function toDateTimeLocal(value: string | null | undefined) {
   if (!value) return "";
@@ -32,20 +30,52 @@ export default function EventDetailPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
   const [form, setForm] = useState<EventFormData | null>(null);
-
   const [newShow, setNewShow] = useState({
     show_time: "",
     total_seats: "",
     price: "",
   });
-
   const [editingShowId, setEditingShowId] = useState<string | null>(null);
 
-  if (loading) return <p>Loading...</p>;
-  if (!event)
-    return <p style={{ color: "red" }}>{error || "Event not found"}</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          <div
+            className="rounded-2xl border border-dashed p-6 text-center"
+            style={{
+              color: "var(--text-muted)",
+              borderColor:
+                "color-mix(in srgb, var(--border-color) 80%, transparent)",
+              background: "color-mix(in srgb, var(--card-bg) 82%, transparent)",
+            }}
+          >
+            Loading event details...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          <p
+            className="rounded-2xl px-4 py-3 text-sm font-medium"
+            style={{
+              color: "var(--error-color)",
+              background:
+                "color-mix(in srgb, var(--error-color) 12%, var(--card-bg))",
+            }}
+          >
+            {error || "Event not found"}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const eventForm: EventFormData = {
     title: event.title ?? "",
@@ -154,77 +184,195 @@ export default function EventDetailPage() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>{event.title}</h1>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* EVENT ACTIONS */}
-      <div style={{ display: "flex", gap: "1rem" }}>
-        {!isEditing && (
-          <button
-            onClick={() => {
-              setForm(eventForm);
-              setIsEditing(true);
-            }}
-          >
-            Edit Event
-          </button>
-        )}
-
-        <button onClick={handleDeleteEvent} style={{ color: "red" }}>
-          Delete Event
-        </button>
-      </div>
-
-      {/* EVENT FORM */}
-      <EventForm
-        form={currentForm}
-        setForm={setCurrentForm}
-        onSubmit={handleUpdateEvent}
-        submitting={false}
-        isEditing={isEditing}
-      />
-
-      {isEditing && (
-        <button
-          onClick={() => {
-            setForm(eventForm);
-            setIsEditing(false);
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <section
+          className="rounded-3xl border px-6 py-8 backdrop-blur-sm sm:px-8"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
           }}
         >
-          Cancel
-        </button>
-      )}
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-3">
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.3em]"
+                style={{ color: "var(--accent1)" }}
+              >
+                {event.category || "Event Detail"}
+              </p>
+              <h1
+                className="text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ color: "var(--text-color)" }}
+              >
+                {event.title}
+              </h1>
+              <div className="flex flex-wrap gap-2">
+                {event.city && (
+                  <span
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                      color: "var(--text-color)",
+                      border:
+                        "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                    }}
+                  >
+                    {event.city}
+                  </span>
+                )}
+                {event.venue && (
+                  <span
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--highlight) 72%, transparent)",
+                      color: "var(--text-color)",
+                      border:
+                        "1px solid color-mix(in srgb, var(--border-color) 70%, transparent)",
+                    }}
+                  >
+                    {event.venue}
+                  </span>
+                )}
+              </div>
+              {error && (
+                <p
+                  style={{ color: "var(--error-color)" }}
+                  className="text-sm font-medium"
+                >
+                  {error}
+                </p>
+              )}
+            </div>
 
-      {/* SHOWS */}
-      <div style={{ marginTop: "2rem" }}>
-        <button
-          onClick={() => {
-            setEditingShowId(null);
-            setNewShow({ show_time: "", total_seats: "", price: "" });
-            setShowModal(true);
+            <div className="flex flex-wrap gap-3">
+              {!isEditing && (
+                <button
+                  onClick={() => {
+                    setForm(eventForm);
+                    setIsEditing(true);
+                  }}
+                  className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition"
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                    color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
+                  }}
+                >
+                  Edit Event
+                </button>
+              )}
+
+              <button
+                onClick={handleDeleteEvent}
+                className="inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition"
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--error-color) 18%, var(--card-bg))",
+                  color: "var(--error-color)",
+                  borderColor:
+                    "color-mix(in srgb, var(--error-color) 45%, var(--border-color))",
+                }}
+              >
+                Delete Event
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <EventForm
+              form={currentForm}
+              setForm={setCurrentForm}
+              onSubmit={handleUpdateEvent}
+              submitting={false}
+              isEditing={isEditing}
+            />
+          </div>
+
+          {isEditing && (
+            <button
+              onClick={() => {
+                setForm(eventForm);
+                setIsEditing(false);
+              }}
+              className="mt-4 inline-flex items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                color: "var(--text-color)",
+                borderColor: "var(--border-color)",
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </section>
+
+        <section
+          className="rounded-3xl border px-6 py-8 backdrop-blur-sm sm:px-8"
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
           }}
         >
-          Add Show
-        </button>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.3em]"
+                style={{ color: "var(--accent1)" }}
+              >
+                Show Schedule
+              </p>
+              <h2
+                className="text-2xl font-bold"
+                style={{ color: "var(--text-color)" }}
+              >
+                Manage shows
+              </h2>
+            </div>
 
-        <ShowsTable
-          shows={shows}
-          onEdit={handleEditShow}
-          onDelete={handleDeleteShow}
+            <button
+              onClick={() => {
+                setEditingShowId(null);
+                setNewShow({ show_time: "", total_seats: "", price: "" });
+                setShowModal(true);
+              }}
+              className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5"
+              style={{
+                background: "var(--gradient-primary)",
+                boxShadow:
+                  "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+              }}
+            >
+              Add Show
+            </button>
+          </div>
+
+          <div className="mt-6">
+            <ShowsTable
+              shows={shows}
+              onEdit={handleEditShow}
+              onDelete={handleDeleteShow}
+            />
+          </div>
+        </section>
+
+        <AddShowModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          newShow={newShow}
+          setNewShow={setNewShow}
+          onSubmit={handleSaveShow}
+          mode={editingShowId ? "edit" : "create"}
         />
       </div>
-
-      {/* MODAL */}
-      <AddShowModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        newShow={newShow}
-        setNewShow={setNewShow}
-        onSubmit={handleSaveShow}
-        mode={editingShowId ? "edit" : "create"}
-      />
     </div>
   );
 }

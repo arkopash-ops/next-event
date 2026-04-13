@@ -1,11 +1,20 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import Link from "next/link";
 
 export default function RegisterPage() {
+  const shellClass =
+    "min-h-screen px-4 py-8 sm:px-6 lg:px-10 flex items-center justify-center";
+  const cardClass = "rounded-3xl border backdrop-blur-sm";
+  const panelClass = "rounded-2xl border";
+  const labelClass = "mb-2 block text-sm font-semibold";
+  const inputClass =
+    "w-full rounded-xl border px-4 py-3 outline-none transition";
+  const linkClass = "font-semibold transition";
+
   const router = useRouter();
   const { login } = useAuth();
 
@@ -84,275 +93,295 @@ export default function RegisterPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "var(--bg-color)",
-        color: "var(--text-color)",
-        transition: "background-color 0.3s, color 0.3s",
-        padding: "1rem",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          backgroundColor: "var(--card-bg)",
-          border: `1px solid var(--border-color)`,
-          borderRadius: "12px",
-          padding: "2rem",
-          boxShadow: `0 8px 24px var(--shadow-color)`,
-          transition: "background-color 0.3s, border 0.3s, color 0.3s",
-        }}
-      >
-        <h1
+    <div className={shellClass}>
+      <div className="grid w-full max-w-6xl gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+        <section
+          className={`${cardClass} hidden min-h-180 overflow-hidden p-10 lg:flex lg:flex-col lg:justify-between`}
           style={{
-            textAlign: "center",
-            fontSize: "2rem",
-            fontWeight: "bold",
-            marginBottom: "1.5rem",
-            color: "var(--text-color)",
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
           }}
         >
-          Register
-        </h1>
+          <div className="space-y-4">
+            <p
+              className="text-xs font-semibold uppercase tracking-[0.3em]"
+              style={{ color: "var(--accent1)" }}
+            >
+              Create your profile
+            </p>
+            <h1
+              className="text-5xl font-black leading-tight"
+              style={{ color: "var(--text-color)" }}
+            >
+              Join the crowd behind every great show.
+            </h1>
+            <p
+              className="max-w-lg text-sm leading-6 sm:text-base"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Sign up as a user to book experiences, or register as an organizer
+              to start publishing events with a polished dashboard.
+            </p>
+          </div>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          <div className="space-y-4">
+            {[
+              "User accounts can discover and manage tickets.",
+              "Organizers can publish events and schedule shows.",
+              "The interface automatically follows your light and dark theme.",
+            ].map((item) => (
+              <div
+                key={item}
+                className={`${panelClass} p-4 text-sm leading-6`}
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                  borderColor:
+                    "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                  color: "var(--text-color)",
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className={`${cardClass} px-6 py-8 sm:px-8 sm:py-10`}
+          style={{
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
+          }}
         >
-          {/* Name */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
-            >
-              Name:
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            />
-          </div>
+          <div className="mx-auto flex max-w-2xl flex-col gap-6">
+            <div className="space-y-2 text-center">
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.3em]"
+                style={{ color: "var(--accent1)" }}
+              >
+                Register
+              </p>
+              <h1
+                className="text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ color: "var(--text-color)" }}
+              >
+                Create your account
+              </h1>
+              <p
+                className="text-sm leading-6 sm:text-base"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Pick your role and fill in the details below.
+              </p>
+            </div>
 
-          {/* Email */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
-            >
-              Email:
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            />
-          </div>
-
-          {/* Password */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
-            >
-              Password:
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            />
-          </div>
-
-          {/* Role */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
-            >
-              Role:
-            </label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            >
-              <option value="USER">User</option>
-              <option value="ORGANIZER">Organizer</option>
-            </select>
-          </div>
-
-          {/* Organizer fields */}
-          {form.role === "ORGANIZER" && (
-            <>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+            <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+              <div>
                 <label
-                  style={{
-                    marginBottom: "0.25rem",
-                    fontWeight: 500,
-                    color: "var(--text-color)",
-                  }}
+                  htmlFor="name"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
                 >
-                  Company Name:
+                  Name
                 </label>
                 <input
+                  id="name"
                   type="text"
-                  name="companyName"
-                  value={form.companyName}
+                  name="name"
+                  value={form.name}
                   onChange={handleChange}
                   required
+                  className={inputClass}
+                  placeholder="Your full name"
                   style={{
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "8px",
-                    border: `1px solid var(--border-color)`,
-                    backgroundColor: "var(--card-bg)",
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
                     color: "var(--text-color)",
-                    transition:
-                      "border-color 0.2s, background-color 0.3s, color 0.3s",
+                    borderColor: "var(--border-color)",
                   }}
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
                 <label
+                  htmlFor="email"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                  placeholder="you@example.com"
                   style={{
-                    marginBottom: "0.25rem",
-                    fontWeight: 500,
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
                     color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                  placeholder="Create a strong password"
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                    color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="role"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
+                >
+                  Role
+                </label>
+                <select
+                  id="role"
+                  name="role"
+                  value={form.role}
+                  onChange={handleChange}
+                  className={inputClass}
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                    color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
                   }}
                 >
-                  Description:
-                </label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  style={{
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "8px",
-                    border: `1px solid var(--border-color)`,
-                    backgroundColor: "var(--card-bg)",
-                    color: "var(--text-color)",
-                    transition:
-                      "border-color 0.2s, background-color 0.3s, color 0.3s",
-                  }}
-                />
+                  <option value="USER">User</option>
+                  <option value="ORGANIZER">Organizer</option>
+                </select>
               </div>
-            </>
-          )}
 
-          {/* Submit button */}
-          <button
-            type="submit"
-            style={{
-              marginTop: "0.5rem",
-              padding: "0.5rem 1rem",
-              borderRadius: "8px",
-              backgroundColor: "var(--orange)",
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "background-color 0.2s, transform 0.2s",
-              border: "none",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--accent1)")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--orange)")
-            }
-          >
-            Register
-          </button>
-        </form>
+              {form.role === "ORGANIZER" && (
+                <>
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="companyName"
+                      className={labelClass}
+                      style={{ color: "var(--text-color)" }}
+                    >
+                      Company Name
+                    </label>
+                    <input
+                      id="companyName"
+                      type="text"
+                      name="companyName"
+                      value={form.companyName}
+                      onChange={handleChange}
+                      required
+                      className={inputClass}
+                      placeholder="Your brand or company"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                        color: "var(--text-color)",
+                        borderColor: "var(--border-color)",
+                      }}
+                    />
+                  </div>
 
-        {message && (
-          <p
-            style={{
-              marginTop: "1rem",
-              textAlign: "center",
-              color: "var(--error-color)",
-              fontWeight: 500,
-            }}
-          >
-            {message}
-          </p>
-        )}
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="description"
+                      className={labelClass}
+                      style={{ color: "var(--text-color)" }}
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      className={`${inputClass} min-h-32`}
+                      placeholder="Tell people what you organize"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                        color: "var(--text-color)",
+                        borderColor: "var(--border-color)",
+                      }}
+                    />
+                  </div>
+                </>
+              )}
 
-        <p
-          style={{
-            marginTop: "1rem",
-            textAlign: "center",
-            color: "var(--text-muted)",
-          }}
-        >
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            style={{ color: "var(--link-color)", fontWeight: 500 }}
-          >
-            Login
-          </Link>
-        </p>
+              <div className="sm:col-span-2">
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5"
+                  style={{
+                    background: "var(--gradient-primary)",
+                    boxShadow:
+                      "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+                  }}
+                >
+                  Register
+                </button>
+              </div>
+            </form>
+
+            {message && (
+              <p
+                className="rounded-2xl px-4 py-3 text-center text-sm font-medium"
+                style={{
+                  color: "var(--error-color)",
+                  background:
+                    "color-mix(in srgb, var(--error-color) 12%, var(--card-bg))",
+                }}
+              >
+                {message}
+              </p>
+            )}
+
+            <p
+              className="text-center text-sm"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className={linkClass}
+                style={{ color: "var(--link-color)" }}
+              >
+                Login
+              </Link>
+            </p>
+          </div>
+        </section>
       </div>
     </div>
   );

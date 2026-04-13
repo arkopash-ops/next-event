@@ -1,14 +1,22 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 
 export default function LoginPage() {
+  const shellClass =
+    "min-h-screen px-4 py-8 sm:px-6 lg:px-10 flex items-center justify-center";
+  const cardClass = "rounded-3xl border backdrop-blur-sm";
+  const panelClass = "rounded-2xl border";
+  const labelClass = "mb-2 block text-sm font-semibold";
+  const inputClass =
+    "w-full rounded-xl border px-4 py-3 outline-none transition";
+  const linkClass = "font-semibold transition";
+
   const router = useRouter();
   const { login } = useAuth();
-
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
@@ -63,154 +71,198 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "var(--bg-color)",
-        color: "var(--text-color)",
-        transition: "background-color 0.3s, color 0.3s",
-        padding: "1rem",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          backgroundColor: "var(--card-bg)",
-          border: `1px solid var(--border-color)`,
-          borderRadius: "12px",
-          padding: "2rem",
-          boxShadow: `0 8px 24px var(--shadow-color)`,
-          transition: "background-color 0.3s, color 0.3s, border 0.3s",
-        }}
-      >
-        <h1
+    <div className={shellClass}>
+      <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <section
+          className={`${cardClass} hidden min-h-155 overflow-hidden p-10 lg:flex lg:flex-col lg:justify-between`}
           style={{
-            textAlign: "center",
-            fontSize: "2rem",
-            fontWeight: "bold",
-            marginBottom: "1.5rem",
-            color: "var(--text-color)",
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
           }}
         >
-          Login
-        </h1>
-
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
+          <div className="space-y-4">
+            <p
+              className="text-xs font-semibold uppercase tracking-[0.3em]"
+              style={{ color: "var(--accent1)" }}
             >
-              Email:
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            />
+              Welcome back
+            </p>
+            <h1
+              className="text-5xl font-black leading-tight"
+              style={{ color: "var(--text-color)" }}
+            >
+              Step into your next event.
+            </h1>
+            <p
+              className="max-w-lg text-sm leading-6 sm:text-base"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Track bookings, browse fresh shows, and manage every ticket from a
+              single place that adapts to your theme.
+            </p>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label
-              style={{
-                marginBottom: "0.25rem",
-                fontWeight: 500,
-                color: "var(--text-color)",
-              }}
-            >
-              Password:
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "8px",
-                border: `1px solid var(--border-color)`,
-                backgroundColor: "var(--card-bg)",
-                color: "var(--text-color)",
-                transition:
-                  "border-color 0.2s, background-color 0.3s, color 0.3s",
-              }}
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              "Book faster",
+              "View tickets",
+              "Explore events",
+              "Stay organized",
+            ].map((item) => (
+              <div
+                key={item}
+                className={`${panelClass} p-4`}
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--card-bg) 96%, transparent)",
+                  borderColor:
+                    "color-mix(in srgb, var(--border-color) 80%, transparent)",
+                }}
+              >
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--accent1)" }}
+                >
+                  NextEvent
+                </p>
+                <p
+                  className="mt-2 text-lg font-bold"
+                  style={{ color: "var(--text-color)" }}
+                >
+                  {item}
+                </p>
+              </div>
+            ))}
           </div>
+        </section>
 
-          <button
-            type="submit"
-            style={{
-              marginTop: "0.5rem",
-              padding: "0.5rem 1rem",
-              borderRadius: "8px",
-              backgroundColor: "var(--orange)",
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "background-color 0.2s, transform 0.2s",
-              border: "none",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--accent1)")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--orange)")
-            }
-          >
-            Login
-          </button>
-        </form>
-
-        {message && (
-          <p
-            style={{
-              marginTop: "1rem",
-              textAlign: "center",
-              color: "var(--error-color)",
-              fontWeight: 500,
-            }}
-          >
-            {message}
-          </p>
-        )}
-
-        <p
+        <section
+          className={`${cardClass} px-6 py-8 sm:px-8 sm:py-10`}
           style={{
-            marginTop: "1rem",
-            textAlign: "center",
-            color: "var(--text-muted)",
+            background: "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+            borderColor:
+              "color-mix(in srgb, var(--border-color) 88%, transparent)",
+            boxShadow: "0 18px 40px var(--shadow-color)",
           }}
         >
-          New here?{" "}
-          <Link
-            href="/register"
-            style={{ color: "var(--link-color)", fontWeight: 500 }}
-          >
-            Register
-          </Link>
-        </p>
+          <div className="mx-auto flex max-w-md flex-col gap-6">
+            <div className="space-y-2 text-center">
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.3em]"
+                style={{ color: "var(--accent1)" }}
+              >
+                Login
+              </p>
+              <h1
+                className="text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ color: "var(--text-color)" }}
+              >
+                Access your account
+              </h1>
+              <p
+                className="text-sm leading-6 sm:text-base"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Use your email and password to continue.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="email"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                  placeholder="you@example.com"
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                    color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className={labelClass}
+                  style={{ color: "var(--text-color)" }}
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                  placeholder="Enter your password"
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                    color: "var(--text-color)",
+                    borderColor: "var(--border-color)",
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: "var(--gradient-primary)",
+                  boxShadow:
+                    "0 14px 30px color-mix(in srgb, var(--accent2) 20%, transparent)",
+                }}
+              >
+                Login
+              </button>
+            </form>
+
+            {message && (
+              <p
+                className="rounded-2xl px-4 py-3 text-center text-sm font-medium"
+                style={{
+                  color: "var(--error-color)",
+                  background:
+                    "color-mix(in srgb, var(--error-color) 12%, var(--card-bg))",
+                }}
+              >
+                {message}
+              </p>
+            )}
+
+            <p
+              className="text-center text-sm"
+              style={{ color: "var(--text-muted)" }}
+            >
+              New here?{" "}
+              <Link
+                href="/register"
+                className={linkClass}
+                style={{ color: "var(--link-color)" }}
+              >
+                Register
+              </Link>
+            </p>
+          </div>
+        </section>
       </div>
     </div>
   );
