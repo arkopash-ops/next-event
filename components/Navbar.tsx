@@ -105,6 +105,12 @@ export const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
             <Link href="/userDashboard" style={linkStyle("/userDashboard")}>
               Dashboard
             </Link>
+            <Link
+              href="/userDashboard/tickets"
+              style={linkStyle("/userDashboard/tickets")}
+            >
+              My Tickets
+            </Link>
           </div>
         )}
 
