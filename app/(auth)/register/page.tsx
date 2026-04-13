@@ -40,17 +40,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { name, email, password, role, companyName } = form;
-
-    if (!name || !email || !password) {
-      setMessage("All fields are required.");
-      return;
-    }
-
-    if (role === "ORGANIZER" && !companyName) {
-      setMessage("Company name is required for organizers.");
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -60,6 +50,7 @@ export default function RegisterPage() {
       });
 
       const data = await res.json();
+
       if (res.ok) {
         const meRes = await fetch("/api/auth/me", {
           method: "GET",
@@ -90,6 +81,42 @@ export default function RegisterPage() {
       console.error(err);
       setMessage("Something went wrong.");
     }
+  };
+
+  const validateForm = () => {
+    if (!form.name.trim()) {
+      setMessage("Name is required.");
+      return false;
+    }
+
+    if (!form.email.trim()) {
+      setMessage("Email is required.");
+      return false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        setMessage("Enter a valid email address.");
+        return false;
+      }
+    }
+
+    if (!form.password.trim()) {
+      setMessage("Password is required.");
+      return false;
+    } else if (form.password.length < 6) {
+      setMessage("Password must be at least 6 characters.");
+      return false;
+    }
+
+    if (form.role === "ORGANIZER") {
+      if (!form.companyName.trim()) {
+        setMessage("Company name is required for organizers.");
+        return false;
+      }
+    }
+
+    setMessage("");
+    return true;
   };
 
   return (
@@ -195,7 +222,6 @@ export default function RegisterPage() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  required
                   className={inputClass}
                   placeholder="Your full name"
                   style={{
@@ -221,7 +247,6 @@ export default function RegisterPage() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  required
                   className={inputClass}
                   placeholder="you@example.com"
                   style={{
@@ -247,7 +272,6 @@ export default function RegisterPage() {
                   name="password"
                   value={form.password}
                   onChange={handleChange}
-                  required
                   className={inputClass}
                   placeholder="Create a strong password"
                   style={{
@@ -301,7 +325,6 @@ export default function RegisterPage() {
                       name="companyName"
                       value={form.companyName}
                       onChange={handleChange}
-                      required
                       className={inputClass}
                       placeholder="Your brand or company"
                       style={{

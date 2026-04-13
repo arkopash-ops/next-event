@@ -2,6 +2,7 @@
 
 import { EventFormData } from "@/types/event";
 import { EVENT_CATEGORIES } from "@/types/eventCategories";
+import { useState } from "react";
 
 type EventFormProps = {
   form: EventFormData;
@@ -18,6 +19,8 @@ export default function EventForm({
   submitting,
   isEditing = true,
 }: EventFormProps) {
+  const [message, setMessage] = useState("");
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -25,14 +28,77 @@ export default function EventForm({
   ) => {
     const { name, value } = e.target;
 
+    if (message) setMessage("");
+
     setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  const validateForm = () => {
+    if (!form.title.trim()) {
+      setMessage("Title is required.");
+      return false;
+    }
+
+    if (!form.description.trim()) {
+      setMessage("Description is required.");
+      return false;
+    }
+
+    if (!form.category.trim()) {
+      setMessage("Category is required.");
+      return false;
+    }
+
+    if (!form.city.trim()) {
+      setMessage("City is required.");
+      return false;
+    }
+
+    if (!form.venue.trim()) {
+      setMessage("Venue is required.");
+      return false;
+    }
+
+    if (!form.start_time) {
+      setMessage("Start time is required.");
+      return false;
+    }
+
+    if (!form.end_time) {
+      setMessage("End time is required.");
+      return false;
+    }
+
+    const startTime = new Date(form.start_time);
+    const endTime = new Date(form.end_time);
+
+    if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
+      setMessage("Enter valid start and end times.");
+      return false;
+    }
+
+    if (endTime <= startTime) {
+      setMessage("End time must be later than start time.");
+      return false;
+    }
+
+    setMessage("");
+    return true;
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    onSubmit(e);
+  };
+
   return (
-    <form onSubmit={onSubmit} className="grid gap-5 md:grid-cols-2">
+    <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
       <div className="md:col-span-2">
         <label
           htmlFor="title"
@@ -43,6 +109,7 @@ export default function EventForm({
         </label>
         <input
           id="title"
+          type="text"
           name="title"
           value={form.title}
           onChange={handleChange}
@@ -121,6 +188,7 @@ export default function EventForm({
         </label>
         <input
           id="city"
+          type="text"
           name="city"
           value={form.city}
           onChange={handleChange}
@@ -145,6 +213,7 @@ export default function EventForm({
         </label>
         <input
           id="venue"
+          type="text"
           name="venue"
           value={form.venue}
           onChange={handleChange}
@@ -222,6 +291,19 @@ export default function EventForm({
             {submitting ? "Saving..." : "Save"}
           </button>
         </div>
+      )}
+
+      {message && (
+        <p
+          className="md:col-span-2 rounded-2xl px-4 py-3 text-center text-sm font-medium"
+          style={{
+            color: "var(--error-color)",
+            background:
+              "color-mix(in srgb, var(--error-color) 12%, var(--card-bg))",
+          }}
+        >
+          {message}
+        </p>
       )}
     </form>
   );

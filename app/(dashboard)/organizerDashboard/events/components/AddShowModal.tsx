@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { ShowForm } from "@/types/shows";
 
 type AddShowModalProps = {
@@ -17,15 +19,55 @@ export default function AddShowModal({
   onSubmit,
   mode = "create",
 }: AddShowModalProps) {
+  const [message, setMessage] = useState("");
+
   if (!showModal) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
+    if (message) setMessage("");
+
     setNewShow((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const validateForm = () => {
+    if (!newShow.show_time) {
+      setMessage("Show time is required.");
+      return false;
+    }
+
+    if (!newShow.total_seats.trim()) {
+      setMessage("Total seats is required.");
+      return false;
+    }
+
+    if (Number(newShow.total_seats) <= 0) {
+      setMessage("Total seats must be greater than 0.");
+      return false;
+    }
+
+    if (!newShow.price.trim()) {
+      setMessage("Price is required.");
+      return false;
+    }
+
+    if (Number(newShow.price) < 0) {
+      setMessage("Price cannot be negative.");
+      return false;
+    }
+
+    setMessage("");
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (!validateForm()) return;
+
+    onSubmit();
   };
 
   const title = mode === "edit" ? "Edit Show" : "Add Show";
@@ -76,6 +118,7 @@ export default function AddShowModal({
               value={newShow.show_time}
               onChange={handleChange}
               min={new Date().toISOString().slice(0, 16)}
+              required
               className="w-full rounded-xl border px-4 py-3 outline-none transition"
               style={{
                 background:
@@ -100,6 +143,8 @@ export default function AddShowModal({
               name="total_seats"
               value={newShow.total_seats}
               onChange={handleChange}
+              min="1"
+              required
               className="w-full rounded-xl border px-4 py-3 outline-none transition"
               style={{
                 background:
@@ -124,6 +169,9 @@ export default function AddShowModal({
               name="price"
               value={newShow.price}
               onChange={handleChange}
+              min="0"
+              step="0.01"
+              required
               className="w-full rounded-xl border px-4 py-3 outline-none transition"
               style={{
                 background:
@@ -137,7 +185,7 @@ export default function AddShowModal({
 
         <div className="mt-6 flex flex-wrap gap-3">
           <button
-            onClick={onSubmit}
+            onClick={handleSubmit}
             className="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5"
             style={{
               background: "var(--gradient-primary)",
@@ -160,6 +208,19 @@ export default function AddShowModal({
             Cancel
           </button>
         </div>
+
+        {message && (
+          <p
+            className="mt-4 rounded-2xl px-4 py-3 text-center text-sm font-medium"
+            style={{
+              color: "var(--error-color)",
+              background:
+                "color-mix(in srgb, var(--error-color) 12%, var(--card-bg))",
+            }}
+          >
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );

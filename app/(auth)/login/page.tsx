@@ -28,12 +28,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { email, password } = form;
-
-    if (!email || !password) {
-      setMessage("All fields are required.");
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -68,6 +63,29 @@ export default function LoginPage() {
       console.error(err);
       setMessage("Something went wrong.");
     }
+  };
+
+  const validateForm = () => {
+    if (!form.email.trim()) {
+      setMessage("Email is required.");
+      return false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        setMessage("Enter a valid email address.");
+        return false;
+      }
+    }
+
+    if (!form.password.trim()) {
+      setMessage("Password is required.");
+      return false;
+    } else if (form.password.length < 6) {
+      setMessage("Password must be at least 6 characters.");
+      return false;
+    }
+    setMessage("");
+    return true;
   };
 
   return (
@@ -184,7 +202,6 @@ export default function LoginPage() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  required
                   className={inputClass}
                   placeholder="you@example.com"
                   style={{
@@ -210,7 +227,6 @@ export default function LoginPage() {
                   name="password"
                   value={form.password}
                   onChange={handleChange}
-                  required
                   className={inputClass}
                   placeholder="Enter your password"
                   style={{
