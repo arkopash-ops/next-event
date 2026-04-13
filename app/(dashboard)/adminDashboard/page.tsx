@@ -6,16 +6,31 @@ import { UserProfiles } from "@/types/userProfiles";
 import { User } from "@/types/users";
 import { useEffect, useState } from "react";
 
+type AdminOverview = {
+  totalUsers: number;
+  totalOrganizers: number;
+  totalEvents: number;
+  upcomingShows: number;
+  confirmedBookings: number;
+  usedTickets: number;
+  failedPayments: number;
+  refundedPayments: number;
+};
+
 export default function AdminDashboard() {
   const [name, setName] = useState("");
+
   const [users, setUsers] = useState<User[]>([]);
   const [userProfiles, setUserProfiles] = useState<UserProfiles[]>([]);
   const [organizerProfiles, setOrganizerProfiles] = useState<
     OrganizerProfiles[]
   >([]);
 
+  const [overview, setOverview] = useState<AdminOverview | null>(null);
+
   useEffect(() => {
     const admin = localStorage.getItem("user");
+
     if (admin) {
       const parsedUser = JSON.parse(admin);
       (async () => {
@@ -23,17 +38,34 @@ export default function AdminDashboard() {
       })();
     }
 
-    fetch("/api/user/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data.users));
+    const loadData = async () => {
+      try {
+        const [usersRes, userProfilesRes, orgProfilesRes, overviewRes] =
+          await Promise.all([
+            fetch("/api/user/users"),
+            fetch("/api/user/userProfiles"),
+            fetch("/api/user/organizerProfiles"),
+            fetch("/api/admin/overview"),
+          ]);
 
-    fetch("/api/user/userProfiles")
-      .then((res) => res.json())
-      .then((data) => setUserProfiles(data.users));
+        const usersData = await usersRes.json();
+        const userProfilesData = await userProfilesRes.json();
+        const orgProfilesData = await orgProfilesRes.json();
+        const overviewData = await overviewRes.json();
 
-    fetch("/api/user/organizerProfiles")
-      .then((res) => res.json())
-      .then((data) => setOrganizerProfiles(data.users));
+        setUsers(usersData.users || []);
+        setUserProfiles(userProfilesData.users || []);
+        setOrganizerProfiles(orgProfilesData.users || []);
+
+        if (overviewData?.success) {
+          setOverview(overviewData.overview);
+        }
+      } catch (err) {
+        console.error("Failed to load admin dashboard data:", err);
+      }
+    };
+
+    loadData();
   }, []);
 
   const renderTable = <T extends object>(title: string, data: T[]) => {
@@ -146,6 +178,7 @@ export default function AdminDashboard() {
     <ProtectedRoute allowedRoles={["ADMIN"]}>
       <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          {/* HEADER */}
           <section
             className="rounded-3xl border px-6 py-8 backdrop-blur-sm sm:px-8"
             style={{
@@ -161,21 +194,60 @@ export default function AdminDashboard() {
             >
               Admin Dashboard
             </p>
+
             <h1
               className="text-3xl font-bold tracking-tight sm:text-4xl"
               style={{ color: "var(--text-color)" }}
             >
               Hello, {name || "Admin"}
             </h1>
+
             <p
               className="mt-2 text-sm leading-6 sm:text-base"
               style={{ color: "var(--text-muted)" }}
             >
-              Review platform users and profile data in a cleaner, theme-aware
-              control center.
+              Review platform users, profiles, and system analytics.
             </p>
           </section>
 
+          {/* OVERVIEW */}
+          {overview && (
+            <section
+              className="grid grid-cols-2 gap-4 rounded-3xl border p-6 sm:grid-cols-4"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--card-bg) 92%, transparent)",
+                borderColor:
+                  "color-mix(in srgb, var(--border-color) 88%, transparent)",
+              }}
+            >
+              {Object.entries(overview).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="rounded-2xl border p-4 text-center"
+                  style={{
+                    borderColor:
+                      "color-mix(in srgb, var(--border-color) 70%, transparent)",
+                  }}
+                >
+                  <p
+                    className="text-xs font-semibold uppercase tracking-[0.3em]"
+                    style={{ color: "var(--accent1)" }}
+                  >
+                    {key}
+                  </p>
+                  <p
+                    className="mt-2 text-2xl font-bold"
+                    style={{ color: "var(--text-color)" }}
+                  >
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* TABLES */}
           {renderTable("Users", users)}
           {renderTable("User Profiles", userProfiles)}
           {renderTable("Organizer Profiles", organizerProfiles)}
